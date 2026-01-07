@@ -1,0 +1,11 @@
+{
+  "name": "quakepp",
+  "version-string": "latest",
+  "dependencies": [
+    {
+      "name": "sdl2",
+      "version>=": "2.32.10"
+    }
+  ],
+  "builtin-baseline": "5f4cddb220a4630a8ffc8db9270b8bf03483df60"
+}
