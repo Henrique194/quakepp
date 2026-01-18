@@ -13,7 +13,7 @@ set(PACKAGE_COPYRIGHT "Copyright (C) ${CURRENT_YEAR}")
 set(PACKAGE_LICENSE "GNU General Public License, version 3")
 set(WIN_DIR "${CMAKE_SOURCE_DIR}/dist/win")
 
-configure_file(cmake/config.h.in src/config.h)
+configure_file(cmake/config.h.in config.h)
 
 # Find math library
 find_library(MATH m)

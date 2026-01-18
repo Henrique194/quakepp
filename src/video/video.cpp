@@ -17,11 +17,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "engine.h"
-#include <SDL_main.h>
+#include "video/video.h"
+#include <SDL.h>
 
+VideoSys::VideoSys() {
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
+        PANIC("Couldn't initialize video system: {}", SDL_GetError());
+    }
+}
 
-int main(int argc, char* argv[]) {
-    Engine::run(argc, argv);
-    return EXIT_SUCCESS;
+VideoSys::~VideoSys() {
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

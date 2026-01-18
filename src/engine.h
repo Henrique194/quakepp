@@ -17,11 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "engine.h"
-#include <SDL_main.h>
+#pragma once
 
+#include "event.h"
+#include "video/video.h"
+#include <exception>
 
-int main(int argc, char* argv[]) {
-    Engine::run(argc, argv);
-    return EXIT_SUCCESS;
-}
+class Engine {
+  public:
+    static void run(int argc, char* argv[]);
+
+  private:
+    static void handleError(const std::exception& e);
+    void runLoop();
+    bool runFrame();
+    EventSys event;
+    VideoSys video;
+};

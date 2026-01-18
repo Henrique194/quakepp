@@ -17,11 +17,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "engine.h"
-#include <SDL_main.h>
+#pragma once
 
+#include "common/common.h"
+#include <vector>
+#include <SDL.h>
 
-int main(int argc, char* argv[]) {
-    Engine::run(argc, argv);
-    return EXIT_SUCCESS;
-}
+enum class Event {
+    None,
+    Quit,
+};
+
+class EventSys {
+  public:
+    EventSys();
+    ~EventSys();
+    void pollEvents();
+    Event getEvent();
+
+  private:
+    void addEvent(const SDL_Event* event);
+    std::vector<Event> events;
+    u32 head{0};
+    u32 tail{0};
+};

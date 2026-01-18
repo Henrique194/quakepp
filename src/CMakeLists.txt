@@ -1,9 +1,20 @@
 include(ConfigureRcFile)
 
+add_compile_definitions($<$<CONFIG:Debug>:PARANOID>)
+
+set(LIBS common video)
+foreach(LIB ${LIBS})
+    add_subdirectory(${LIB})
+endforeach()
+
 set(SOURCE_FILES
+    engine.cpp
+    engine.h
+    event.cpp
+    event.h
     main.cpp
 )
-set(LIBS ${SDL2_LIBRARIES})
+list(APPEND LIBS ${SDL2_LIBRARIES})
 
 if(WIN32)
     add_executable(${PACKAGE_TARNAME} WIN32 ${SOURCE_FILES})
@@ -12,7 +23,7 @@ else()
     add_executable(${PACKAGE_TARNAME} ${SOURCE_FILES})
 endif()
 target_include_directories(${PACKAGE_TARNAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(${PACKAGE_TARNAME} ${LIBS})
+target_link_libraries(${PACKAGE_TARNAME} ${LIBS} stdc++exp)
 
 if(MSVC)
     set_target_properties(${PACKAGE_TARNAME} PROPERTIES
