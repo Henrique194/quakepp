@@ -2,7 +2,7 @@ include(ConfigureRcFile)
 
 add_compile_definitions($<$<CONFIG:Debug>:PARANOID>)
 
-set(LIBS common core video)
+set(LIBS common core input video)
 foreach(LIB ${LIBS})
     add_subdirectory(${LIB})
 endforeach()

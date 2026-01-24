@@ -17,26 +17,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#pragma once
-
-#include "event.h"
 #include "input/input.h"
-#include "video/video.h"
-#include <exception>
+#include <SDL.h>
 
-class Engine {
-  public:
-    static void run(int argc, char* argv[]);
+InputSys::InputSys() {
+    // Start with mouse grabbed.
+    grabMouse();
+}
 
-  private:
-    static void init();
-    static void shutdown();
-    static void runLoop();
-    static void handleError(const std::exception& e);
+void InputSys::grabMouse() {
+    // Relative mode for continuous mouse motion.
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    // Do not show cursor.
+    SDL_ShowCursor(SDL_FALSE);
+    // Zero mouse accumulation, so the camera doesn't go flying.
+    SDL_GetRelativeMouseState(nullptr, nullptr);
+}
 
-    bool runFrame();
-
-    EventSys event{};
-    VideoSys video{};
-    InputSys input{};
-};
+void InputSys::releaseMouse() {
+    SDL_SetRelativeMouseMode(SDL_FALSE);
+    SDL_ShowCursor(SDL_TRUE);
+}

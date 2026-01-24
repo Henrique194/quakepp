@@ -19,24 +19,9 @@
 
 #pragma once
 
-#include "event.h"
-#include "input/input.h"
-#include "video/video.h"
-#include <exception>
-
-class Engine {
+class InputSys {
   public:
-    static void run(int argc, char* argv[]);
-
-  private:
-    static void init();
-    static void shutdown();
-    static void runLoop();
-    static void handleError(const std::exception& e);
-
-    bool runFrame();
-
-    EventSys event{};
-    VideoSys video{};
-    InputSys input{};
+    InputSys();
+    void grabMouse();
+    void releaseMouse();
 };
