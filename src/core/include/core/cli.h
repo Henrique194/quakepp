@@ -19,26 +19,16 @@
 
 #pragma once
 
-#include "cli.h"
-#include "event.h"
-#include "input/input.h"
-#include "video/video.h"
-#include <exception>
+#include <string_view>
+#include <vector>
+#include <unordered_map>
 
-class Engine {
+class Cli {
   public:
-    static void run(int argc, char* argv[]);
-    Engine(int argc, char* argv[]);
+    Cli(int argc, char* argv[]);
+    bool check(std::string_view parm) const;
 
   private:
-    static void init(int argc, char* argv[]);
-    static void shutdown();
-    static void runLoop();
-    static void handleError(const std::exception& e);
-    bool runFrame();
-
-    Cli cli;
-    EventSys event{};
-    VideoSys video{};
-    InputSys input{};
+    std::vector<std::string_view> argv;
+    std::unordered_map<std::string_view, int> idx_map;
 };

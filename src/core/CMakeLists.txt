@@ -1,6 +1,7 @@
 set(LIB core)
 
 add_library(${LIB} STATIC
+    cli.cpp
     engine.cpp
     event.cpp
 )

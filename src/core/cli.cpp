@@ -17,28 +17,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#pragma once
+#include "core/cli.h"
 
-#include "cli.h"
-#include "event.h"
-#include "input/input.h"
-#include "video/video.h"
-#include <exception>
+Cli::Cli(int argc, char* argv[])
+    : argv(argc) {
+    idx_map.reserve(argc);
+    for (int i = 0; i < argc; i++) {
+        this->argv[i] = argv[i];
+        this->idx_map.emplace(this->argv[i], i);
+    }
+}
 
-class Engine {
-  public:
-    static void run(int argc, char* argv[]);
-    Engine(int argc, char* argv[]);
-
-  private:
-    static void init(int argc, char* argv[]);
-    static void shutdown();
-    static void runLoop();
-    static void handleError(const std::exception& e);
-    bool runFrame();
-
-    Cli cli;
-    EventSys event{};
-    VideoSys video{};
-    InputSys input{};
-};
+bool Cli::check(std::string_view parm) const {
+    return idx_map.contains(parm);
+}

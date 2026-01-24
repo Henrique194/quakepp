@@ -18,23 +18,19 @@
  */
 
 #include "core/engine.h"
-#include "config.h"
 #include "common/common.h"
+#include "config.h"
 #include <SDL.h>
 #include <memory>
 
 static std::unique_ptr<Engine> engine;
 
-void Engine::handleError(const std::exception& e) {
-    u32 flags{SDL_MESSAGEBOX_ERROR};
-    const char* title{PACKAGE_STRING};
-    const char* msg{e.what()};
-    SDL_Window* window{nullptr};
-    SDL_ShowSimpleMessageBox(flags, title, msg, window);
+Engine::Engine(int argc, char* argv[])
+    : cli{argc, argv} {
 }
 
-void Engine::init() {
-    engine = std::make_unique<Engine>();
+void Engine::init(int argc, char* argv[]) {
+    engine = std::make_unique<Engine>(argc, argv);
 }
 
 void Engine::shutdown() {
@@ -44,7 +40,7 @@ void Engine::shutdown() {
 
 void Engine::run(int argc, char* argv[]) {
     try {
-        init();
+        init(argc, argv);
         runLoop();
     } catch (std::exception& e) {
         handleError(e);
@@ -71,4 +67,12 @@ bool Engine::runFrame() {
                 break;
         }
     }
+}
+
+void Engine::handleError(const std::exception& e) {
+    u32 flags{SDL_MESSAGEBOX_ERROR};
+    const char* title{PACKAGE_STRING};
+    const char* msg{e.what()};
+    SDL_Window* window{nullptr};
+    SDL_ShowSimpleMessageBox(flags, title, msg, window);
 }
