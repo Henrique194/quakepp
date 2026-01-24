@@ -28,9 +28,11 @@ class Engine {
     static void run(int argc, char* argv[]);
 
   private:
+    static void init();
+    static void shutdown();
+    static void runLoop();
     static void handleError(const std::exception& e);
-    void runLoop();
     bool runFrame();
-    EventSys event;
-    VideoSys video;
+    EventSys event{};
+    VideoSys video{};
 };

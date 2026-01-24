@@ -23,6 +23,20 @@
 #include <vector>
 #include <SDL.h>
 
+class SdlEvent {
+    SdlEvent() {
+        if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0) {
+            PANIC("Couldn't initialize event system: {}", SDL_GetError());
+        }
+    }
+
+    ~SdlEvent() {
+        SDL_QuitSubSystem(SDL_INIT_EVENTS);
+    }
+
+    friend class EventSys;
+};
+
 enum class Event {
     None,
     Quit,
@@ -31,13 +45,13 @@ enum class Event {
 class EventSys {
   public:
     EventSys();
-    ~EventSys();
     void pollEvents();
     Event getEvent();
 
   private:
     void addEvent(const SDL_Event* event);
+    SdlEvent sdl_event;
     std::vector<Event> events;
-    u32 head{0};
-    u32 tail{0};
+    u32 head;
+    u32 tail;
 };

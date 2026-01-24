@@ -20,10 +20,11 @@
 #include "video/video.h"
 #include <SDL.h>
 
-VideoSys::VideoSys() {
-    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
-        PANIC("Couldn't initialize video system: {}", SDL_GetError());
-    }
+VideoSys::VideoSys()
+    : sdl_video{}
+    , window{}
+    , width{0}
+    , height{0} {
 }
 
 VideoSys::~VideoSys() {

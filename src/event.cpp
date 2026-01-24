@@ -22,15 +22,10 @@
 #define MAX_EVENTS 1024
 
 EventSys::EventSys()
-    : events(MAX_EVENTS)
-{
-    if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0) {
-        PANIC("Couldn't initialize event system: {}", SDL_GetError());
-    }
-}
-
-EventSys::~EventSys() {
-    SDL_QuitSubSystem(SDL_INIT_EVENTS);
+    : sdl_event{}
+    , events(MAX_EVENTS)
+    , head{0}
+    , tail{0} {
 }
 
 void EventSys::pollEvents() {

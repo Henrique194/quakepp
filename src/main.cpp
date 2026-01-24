@@ -20,7 +20,6 @@
 #include "engine.h"
 #include <SDL_main.h>
 
-
 int main(int argc, char* argv[]) {
     Engine::run(argc, argv);
     return EXIT_SUCCESS;

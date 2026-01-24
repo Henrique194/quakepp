@@ -21,6 +21,21 @@
 
 #include "common/common.h"
 #include "window.h"
+#include <SDL.h>
+
+class SdlVideo {
+    SdlVideo() {
+        if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
+            PANIC("Couldn't initialize video system: {}", SDL_GetError());
+        }
+    }
+
+    ~SdlVideo() {
+        SDL_QuitSubSystem(SDL_INIT_VIDEO);
+    }
+
+    friend class VideoSys;
+};
 
 class VideoSys {
   public:
@@ -28,7 +43,8 @@ class VideoSys {
     ~VideoSys();
 
   private:
-    u32 width{0};
-    u32 height{0};
-    Window window{};
+    SdlVideo sdl_video;
+    Window window;
+    u32 width;
+    u32 height;
 };

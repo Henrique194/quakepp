@@ -25,16 +25,6 @@
 
 static std::unique_ptr<Engine> engine;
 
-void Engine::run(int argc, char* argv[]) {
-    try {
-        engine = std::make_unique<Engine>();
-        engine->runLoop();
-    } catch (std::exception& e) {
-        handleError(e);
-    }
-    engine = nullptr;
-}
-
 void Engine::handleError(const std::exception& e) {
     u32 flags{SDL_MESSAGEBOX_ERROR};
     const char* title{PACKAGE_STRING};
@@ -43,8 +33,27 @@ void Engine::handleError(const std::exception& e) {
     SDL_ShowSimpleMessageBox(flags, title, msg, window);
 }
 
+void Engine::init() {
+    engine = std::make_unique<Engine>();
+}
+
+void Engine::shutdown() {
+    engine = nullptr;
+    SDL_Quit();
+}
+
+void Engine::run(int argc, char* argv[]) {
+    try {
+        init();
+        runLoop();
+    } catch (std::exception& e) {
+        handleError(e);
+    }
+    shutdown();
+}
+
 void Engine::runLoop() {
-    while (runFrame()) {
+    while (engine->runFrame()) {
         SDL_Delay(16); // 60 FPS
     }
 }
