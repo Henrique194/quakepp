@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "engine.h"
+#include "core/engine.h"
 #include <SDL_main.h>
 
 int main(int argc, char* argv[]) {

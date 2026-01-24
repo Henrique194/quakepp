@@ -40,7 +40,6 @@ class SdlVideo {
 class VideoSys {
   public:
     VideoSys();
-    ~VideoSys();
 
   private:
     SdlVideo sdl_video;

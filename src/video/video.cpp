@@ -18,15 +18,10 @@
  */
 
 #include "video/video.h"
-#include <SDL.h>
 
 VideoSys::VideoSys()
     : sdl_video{}
     , window{}
     , width{0}
     , height{0} {
-}
-
-VideoSys::~VideoSys() {
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

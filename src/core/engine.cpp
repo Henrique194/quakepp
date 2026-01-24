@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "engine.h"
+#include "core/engine.h"
 #include "config.h"
 #include "common/common.h"
 #include <SDL.h>

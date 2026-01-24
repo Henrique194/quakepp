@@ -2,18 +2,12 @@ include(ConfigureRcFile)
 
 add_compile_definitions($<$<CONFIG:Debug>:PARANOID>)
 
-set(LIBS common video)
+set(LIBS common core video)
 foreach(LIB ${LIBS})
     add_subdirectory(${LIB})
 endforeach()
 
-set(SOURCE_FILES
-    engine.cpp
-    engine.h
-    event.cpp
-    event.h
-    main.cpp
-)
+set(SOURCE_FILES main.cpp)
 list(APPEND LIBS ${SDL2_LIBRARIES})
 
 if(WIN32)
