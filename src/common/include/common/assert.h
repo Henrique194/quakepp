@@ -19,6 +19,25 @@
 
 #pragma once
 
-#include "assert.h"
-#include "lru.h"
-#include "types.h"
+#include <format>
+#include <stdexcept>
+#include <SDL_assert.h>
+
+//
+// Macro for signaling unrecoverable errors.
+//
+#define PANIC(fmt, ...)                                                        \
+    throw std::runtime_error {                                                 \
+        std::format("[{}] " fmt, SDL_FUNCTION __VA_OPT__(, ) __VA_ARGS__)      \
+    }
+
+#define Q_ASSERT(cond)                                                         \
+    if (!(cond)) {                                                             \
+        PANIC("assertion failed: " #cond);                                     \
+    }
+
+#ifdef PARANOID
+#define Q_DEBUG_ASSERT Q_ASSERT
+#else
+#define Q_DEBUG_ASSERT(cond)
+#endif
