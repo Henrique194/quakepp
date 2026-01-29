@@ -20,5 +20,6 @@
 #pragma once
 
 #include "assert.h"
+#include "io.h"
 #include "lru.h"
 #include "types.h"
