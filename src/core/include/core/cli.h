@@ -19,12 +19,15 @@
 
 #pragma once
 
+#include <memory>
 #include <string_view>
 #include <vector>
 #include <unordered_map>
 
 class Cli {
   public:
+    static void init(int argc, char* argv[]);
+    static void shutdown();
     Cli(int argc, char* argv[]);
     bool check(std::string_view parm) const;
 
@@ -32,3 +35,5 @@ class Cli {
     std::vector<std::string_view> argv;
     std::unordered_map<std::string_view, int> idx_map;
 };
+
+extern std::unique_ptr<Cli> cli;

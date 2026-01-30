@@ -20,22 +20,9 @@
 #pragma once
 
 #include "common/common.h"
+#include <memory>
 #include <vector>
 #include <SDL.h>
-
-class SdlEvent {
-    SdlEvent() {
-        if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0) {
-            PANIC("Couldn't initialize event system: {}", SDL_GetError());
-        }
-    }
-
-    ~SdlEvent() {
-        SDL_QuitSubSystem(SDL_INIT_EVENTS);
-    }
-
-    friend class EventSys;
-};
 
 enum class Event {
     None,
@@ -44,14 +31,17 @@ enum class Event {
 
 class EventSys {
   public:
+    static void init();
+    static void shutdown();
     EventSys();
     void pollEvents();
     Event getEvent();
 
   private:
     void addEvent(const SDL_Event* event);
-    SdlEvent sdl_event;
     std::vector<Event> events;
     u32 head;
     u32 tail;
 };
+
+extern std::unique_ptr<EventSys> event_sys;

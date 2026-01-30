@@ -19,26 +19,16 @@
 
 #pragma once
 
-#include "cli.h"
-#include "event.h"
-#include "input/input.h"
-#include "video/video.h"
 #include <exception>
 
 class Engine {
   public:
     static void run(int argc, char* argv[]);
-    Engine(int argc, char* argv[]);
 
   private:
     static void init(int argc, char* argv[]);
     static void shutdown();
     static void runLoop();
+    static bool runFrame();
     static void handleError(const std::exception& e);
-    bool runFrame();
-
-    Cli cli;
-    EventSys event{};
-    VideoSys video{};
-    InputSys input{};
 };

@@ -19,12 +19,23 @@
 
 #include "core/cli.h"
 
+std::unique_ptr<Cli> cli;
+
+void Cli::init(int argc, char* argv[]) {
+    cli = std::make_unique<Cli>(argc, argv);
+}
+
+void Cli::shutdown() {
+    cli = nullptr;
+}
+
 Cli::Cli(int argc, char* argv[])
-    : argv(argc) {
+    : argv(argc)
+{
     idx_map.reserve(argc);
     for (int i = 0; i < argc; i++) {
         this->argv[i] = argv[i];
-        this->idx_map.emplace(this->argv[i], i);
+        this->idx_map.try_emplace(this->argv[i], i);
     }
 }
 

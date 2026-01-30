@@ -18,23 +18,27 @@
  */
 
 #include "core/engine.h"
+#include "core/cli.h"
+#include "core/event.h"
 #include "common/common.h"
+#include "input/input.h"
+#include "video/video.h"
 #include "config.h"
-#include <SDL.h>
 #include <memory>
-
-static std::unique_ptr<Engine> engine;
-
-Engine::Engine(int argc, char* argv[])
-    : cli{argc, argv} {
-}
+#include <SDL.h>
 
 void Engine::init(int argc, char* argv[]) {
-    engine = std::make_unique<Engine>(argc, argv);
+    Cli::init(argc, argv);
+    EventSys::init();
+    VideoSys::init();
+    InputSys::init();
 }
 
 void Engine::shutdown() {
-    engine = nullptr;
+    InputSys::shutdown();
+    VideoSys::shutdown();
+    EventSys::shutdown();
+    Cli::shutdown();
     SDL_Quit();
 }
 
@@ -49,15 +53,15 @@ void Engine::run(int argc, char* argv[]) {
 }
 
 void Engine::runLoop() {
-    while (engine->runFrame()) {
+    while (runFrame()) {
         SDL_Delay(16); // 60 FPS
     }
 }
 
 bool Engine::runFrame() {
-    event.pollEvents();
+    event_sys->pollEvents();
     while (true) {
-        Event ev{event.getEvent()};
+        Event ev{event_sys->getEvent()};
         switch (ev) {
             case Event::None:
                 return true;

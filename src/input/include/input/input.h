@@ -19,9 +19,14 @@
 
 #pragma once
 
+#include <memory>
+
 class InputSys {
   public:
-    InputSys();
+    static void init();
+    static void shutdown();
     void grabMouse();
     void releaseMouse();
 };
+
+extern std::unique_ptr<InputSys> input_sys;

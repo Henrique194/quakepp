@@ -18,10 +18,18 @@
  */
 
 #include "video/video.h"
+#include <SDL.h>
 
-VideoSys::VideoSys()
-    : sdl_video{}
-    , window{}
-    , width{0}
-    , height{0} {
+std::unique_ptr<VideoSys> video_sys;
+
+void VideoSys::init() {
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
+        PANIC("Couldn't initialize video system: {}", SDL_GetError());
+    }
+    video_sys = std::make_unique<VideoSys>();
+}
+
+void VideoSys::shutdown() {
+    video_sys = nullptr;
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

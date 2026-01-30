@@ -20,9 +20,16 @@
 #include "input/input.h"
 #include <SDL.h>
 
-InputSys::InputSys() {
+std::unique_ptr<InputSys> input_sys;
+
+void InputSys::init() {
+    input_sys = std::make_unique<InputSys>();
     // Start with mouse grabbed.
-    grabMouse();
+    input_sys->grabMouse();
+}
+
+void InputSys::shutdown() {
+    input_sys = nullptr;
 }
 
 void InputSys::grabMouse() {

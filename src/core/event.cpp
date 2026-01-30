@@ -21,9 +21,22 @@
 
 #define MAX_EVENTS 1024
 
+std::unique_ptr<EventSys> event_sys;
+
+void EventSys::init() {
+    if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0) {
+        PANIC("Couldn't initialize event system: {}", SDL_GetError());
+    }
+    event_sys = std::make_unique<EventSys>();
+}
+
+void EventSys::shutdown() {
+    event_sys = nullptr;
+    SDL_QuitSubSystem(SDL_INIT_EVENTS);
+}
+
 EventSys::EventSys()
-    : sdl_event{}
-    , events(MAX_EVENTS)
+    : events(MAX_EVENTS)
     , head{0}
     , tail{0} {
 }

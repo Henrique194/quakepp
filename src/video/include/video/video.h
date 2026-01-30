@@ -21,29 +21,17 @@
 
 #include "common/common.h"
 #include "window.h"
-#include <SDL.h>
-
-class SdlVideo {
-    SdlVideo() {
-        if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
-            PANIC("Couldn't initialize video system: {}", SDL_GetError());
-        }
-    }
-
-    ~SdlVideo() {
-        SDL_QuitSubSystem(SDL_INIT_VIDEO);
-    }
-
-    friend class VideoSys;
-};
+#include <memory>
 
 class VideoSys {
   public:
-    VideoSys();
+    static void init();
+    static void shutdown();
 
   private:
-    SdlVideo sdl_video;
-    Window window;
-    u32 width;
-    u32 height;
+    Window window{};
+    u32 width{0};
+    u32 height{0};
 };
+
+extern std::unique_ptr<VideoSys> video_sys;
