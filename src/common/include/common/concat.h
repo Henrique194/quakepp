@@ -19,10 +19,6 @@
 
 #pragma once
 
-#include "assert.h"
-#include "byte_swap.h"
-#include "concat.h"
-#include "io.h"
-#include "lru.h"
-#include "try.h"
-#include "types.h"
+#define CONCAT(a, b) CONCAT_INNER(a, b)
+
+#define CONCAT_INNER(a, b) a##b

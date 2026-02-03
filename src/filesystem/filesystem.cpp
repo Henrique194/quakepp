@@ -17,12 +17,37 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#pragma once
+#include "filesystem/filesystem.h"
+#include <ranges>
 
-#include "assert.h"
-#include "byte_swap.h"
-#include "concat.h"
-#include "io.h"
-#include "lru.h"
-#include "try.h"
-#include "types.h"
+//
+// Game directory to look in by default.
+//
+static constexpr const char* default_dir = "./id1";
+
+std::unique_ptr<FileSys> file_sys;
+
+void FileSys::init() {
+    file_sys = std::make_unique<FileSys>();
+    file_sys->addGameDir(default_dir);
+}
+
+void FileSys::shutdown() {
+    file_sys = nullptr;
+}
+
+void FileSys::addGameDir(std::string_view dir) {
+    game_dir = dir;
+    search_dirs.emplace_back(dir);
+}
+
+ResultIO<File> FileSys::openFile(std::string_view name) {
+    // Use reverse order so most recent added
+    // directory has higher priority.
+    for (auto& dir : search_dirs | std::views::reverse) {
+        if (auto file{dir.openFile(name)}) {
+            return file;
+        }
+    }
+    return std::unexpected{"Couldn't open file"};
+}

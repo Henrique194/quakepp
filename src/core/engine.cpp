@@ -21,6 +21,7 @@
 #include "core/cli.h"
 #include "core/event.h"
 #include "common/common.h"
+#include "filesystem/filesystem.h"
 #include "input/input.h"
 #include "video/video.h"
 #include "config.h"
@@ -29,6 +30,7 @@
 
 void Engine::init(int argc, char* argv[]) {
     Cli::init(argc, argv);
+    FileSys::init();
     EventSys::init();
     VideoSys::init();
     InputSys::init();
@@ -38,6 +40,7 @@ void Engine::shutdown() {
     InputSys::shutdown();
     VideoSys::shutdown();
     EventSys::shutdown();
+    FileSys::shutdown();
     Cli::shutdown();
     SDL_Quit();
 }

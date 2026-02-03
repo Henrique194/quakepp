@@ -19,10 +19,24 @@
 
 #pragma once
 
-#include "assert.h"
-#include "byte_swap.h"
-#include "concat.h"
-#include "io.h"
-#include "lru.h"
-#include "try.h"
-#include "types.h"
+#include "common/io.h"
+#include "search_dir.h"
+#include <memory>
+#include <string>
+#include <string_view>
+#include <vector>
+
+class FileSys {
+  public:
+    static void init();
+    static void shutdown();
+    ResultIO<File> openFile(std::string_view name);
+
+  private:
+    void addGameDir(std::string_view dir);
+
+    std::string game_dir{};
+    std::vector<SearchDir> search_dirs{};
+};
+
+extern std::unique_ptr<FileSys> file_sys;

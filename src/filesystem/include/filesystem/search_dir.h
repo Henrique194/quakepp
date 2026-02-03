@@ -19,10 +19,18 @@
 
 #pragma once
 
-#include "assert.h"
-#include "byte_swap.h"
-#include "concat.h"
-#include "io.h"
-#include "lru.h"
-#include "try.h"
-#include "types.h"
+#include "common/io.h"
+#include "pak.h"
+#include <string>
+#include <string_view>
+#include <vector>
+
+class SearchDir {
+  public:
+    SearchDir(std::string_view path);
+    ResultIO<File> openFile(std::string_view name);
+
+  private:
+    std::string path;
+    std::vector<PakFile> paks;
+};

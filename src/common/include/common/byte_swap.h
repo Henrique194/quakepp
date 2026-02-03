@@ -19,10 +19,24 @@
 
 #pragma once
 
-#include "assert.h"
-#include "byte_swap.h"
-#include "concat.h"
-#include "io.h"
-#include "lru.h"
-#include "try.h"
-#include "types.h"
+#include <SDL_endian.h>
+
+//
+// Byteswap functions.
+//
+#define Q_Swap16    SDL_Swap16
+#define Q_Swap32    SDL_Swap32
+#define Q_Swap64    SDL_Swap64
+#define Q_SwapFloat SDL_SwapFloat
+
+//
+// Byteswap item from the specified endianness to the native endianness.
+//
+#define Q_Swap16LE    SDL_SwapLE16
+#define Q_Swap32LE    SDL_SwapLE32
+#define Q_Swap64LE    SDL_SwapLE64
+#define Q_SwapFloatLE SDL_SwapFloatLE
+#define Q_Swap16BE    SDL_SwapBE16
+#define Q_Swap32BE    SDL_SwapBE32
+#define Q_Swap64BE    SDL_SwapBE64
+#define Q_SwapFloatBE SDL_SwapFloatBE

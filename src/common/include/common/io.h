@@ -25,6 +25,9 @@
 #include <string_view>
 #include <SDL_rwops.h>
 
+template<typename T>
+using ResultIO = std::expected<T, const char*>;
+
 class File {
   public:
     // Seek from the beginning of data.
@@ -34,7 +37,7 @@ class File {
     // Seek relative to the end of data.
     static constexpr int SeekEnd = RW_SEEK_END;
 
-    static std::expected<File, const char*> open(
+    static ResultIO<File> open(
         std::string_view path,
         std::string_view mode
     ) {
@@ -60,7 +63,7 @@ class File {
         }
     }
 
-    std::expected<size_t, const char*> read(u8* buffer, size_t size) {
+    ResultIO<size_t> read(void* buffer, size_t size) {
         Q_ASSERT(stream != nullptr);
         SDL_ClearError();
         size_t bytes_read{SDL_RWread(stream, buffer, 1, size)};
@@ -70,7 +73,7 @@ class File {
         return bytes_read;
     }
 
-    std::expected<size_t, const char*> write(const u8* buffer, size_t size) {
+    ResultIO<size_t> write(const void* buffer, size_t size) {
         Q_ASSERT(stream != nullptr);
         SDL_ClearError();
         size_t bytes_written{SDL_RWwrite(stream, buffer, 1, size)};
@@ -80,7 +83,7 @@ class File {
         return bytes_written;
     }
 
-    std::expected<i64, const char*> tell() {
+    ResultIO<i64> tell() {
         Q_ASSERT(stream != nullptr);
         SDL_ClearError();
         i64 pos{SDL_RWtell(stream)};
@@ -90,7 +93,7 @@ class File {
         return pos;
     }
 
-    std::expected<i64, const char*> seek(i64 offset, int whence) {
+    ResultIO<i64> seek(i64 offset, int whence) {
         Q_ASSERT(stream != nullptr);
         SDL_ClearError();
         i64 pos{SDL_RWseek(stream, offset, whence)};
@@ -100,7 +103,7 @@ class File {
         return pos;
     }
 
-    std::expected<i64, const char*> size() {
+    ResultIO<i64> size() {
         Q_ASSERT(stream != nullptr);
         SDL_ClearError();
         i64 size{SDL_RWsize(stream)};
