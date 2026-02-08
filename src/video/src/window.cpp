@@ -18,7 +18,8 @@
  */
 
 #include "video/window.h"
-#include "common/common.h"
+#include "common/assert.h"
+#include "common/types.h"
 #include "config.h"
 
 static SDL_Renderer* createRenderer(SDL_Window* window) {

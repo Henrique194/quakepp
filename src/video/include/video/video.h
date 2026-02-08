@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "common/common.h"
+#include "common/types.h"
 #include "window.h"
 #include <memory>
 

@@ -18,6 +18,7 @@
  */
 
 #include "video/video.h"
+#include "common/assert.h"
 #include <SDL.h>
 
 std::unique_ptr<VideoSys> video_sys;

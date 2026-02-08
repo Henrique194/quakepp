@@ -20,7 +20,7 @@
 #include "core/engine.h"
 #include "core/cli.h"
 #include "core/event.h"
-#include "common/common.h"
+#include "common/types.h"
 #include "filesystem/filesystem.h"
 #include "input/input.h"
 #include "video/video.h"

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "common/common.h"
+#include "common/types.h"
 #include <memory>
 #include <vector>
 #include <SDL.h>

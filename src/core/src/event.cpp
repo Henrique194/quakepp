@@ -18,6 +18,7 @@
  */
 
 #include "core/event.h"
+#include "common/assert.h"
 
 #define MAX_EVENTS 1024
 
