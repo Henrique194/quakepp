@@ -1,9 +1,9 @@
 set(LIB core)
 
 add_library(${LIB} STATIC
-    cli.cpp
-    engine.cpp
-    event.cpp
+    src/cli.cpp
+    src/engine.cpp
+    src/event.cpp
 )
 
 target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR})

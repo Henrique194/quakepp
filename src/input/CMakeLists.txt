@@ -1,7 +1,7 @@
 set(LIB input)
 
 add_library(${LIB} STATIC
-    input.cpp
+    src/input.cpp
 )
 
 target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR})
