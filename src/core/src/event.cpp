@@ -20,7 +20,7 @@
 #include "core/event.h"
 #include "common/assert.h"
 
-#define MAX_EVENTS 1024
+static constexpr u8 max_events{128};
 
 std::unique_ptr<EventSys> event_sys;
 
@@ -37,7 +37,7 @@ void EventSys::shutdown() {
 }
 
 EventSys::EventSys()
-    : events(MAX_EVENTS)
+    : events(max_events)
     , head{0}
     , tail{0} {
 }
@@ -57,7 +57,7 @@ void EventSys::addEvent(const SDL_Event* event) {
         default:
             return;
     }
-    head = (head + 1) % MAX_EVENTS;
+    head = (head + 1) % max_events;
 }
 
 Event EventSys::getEvent() {
@@ -65,6 +65,6 @@ Event EventSys::getEvent() {
         return Event::None;
     }
     Event ev{events[tail]};
-    tail = (tail + 1) % MAX_EVENTS;
+    tail = (tail + 1) % max_events;
     return ev;
 }

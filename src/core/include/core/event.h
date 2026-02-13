@@ -40,8 +40,8 @@ class EventSys {
   private:
     void addEvent(const SDL_Event* event);
     std::vector<Event> events;
-    u32 head;
-    u32 tail;
+    u8 head;
+    u8 tail;
 };
 
 extern std::unique_ptr<EventSys> event_sys;
