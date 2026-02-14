@@ -62,18 +62,12 @@ void Engine::runLoop() {
 }
 
 bool Engine::runFrame() {
-    event_sys->pollEvents();
-    while (true) {
-        Event ev{event_sys->getEvent()};
-        switch (ev) {
-            case Event::None:
-                return true;
-            case Event::Quit:
-                return false;
-            default:
-                break;
+    while (auto ev{event_sys->pollEvent()}) {
+        if (ev.type == EventType::Quit) {
+            return false;
         }
     }
+    return true;
 }
 
 void Engine::handleError(const std::exception& e) {

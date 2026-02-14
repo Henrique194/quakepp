@@ -19,29 +19,26 @@
 
 #pragma once
 
-#include "common/types.h"
 #include <memory>
-#include <vector>
-#include <SDL.h>
 
-enum class Event {
+enum class EventType {
     None,
     Quit,
+};
+
+struct Event {
+    EventType type;
+
+    explicit operator bool() const {
+        return type != EventType::None;
+    }
 };
 
 class EventSys {
   public:
     static void init();
     static void shutdown();
-    EventSys();
-    void pollEvents();
-    Event getEvent();
-
-  private:
-    void addEvent(const SDL_Event* event);
-    std::vector<Event> events;
-    u8 head;
-    u8 tail;
+    Event pollEvent();
 };
 
 extern std::unique_ptr<EventSys> event_sys;

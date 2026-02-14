@@ -19,8 +19,7 @@
 
 #include "core/event.h"
 #include "common/assert.h"
-
-static constexpr u8 max_events{128};
+#include <SDL.h>
 
 std::unique_ptr<EventSys> event_sys;
 
@@ -36,35 +35,15 @@ void EventSys::shutdown() {
     SDL_QuitSubSystem(SDL_INIT_EVENTS);
 }
 
-EventSys::EventSys()
-    : events(max_events)
-    , head{0}
-    , tail{0} {
-}
-
-void EventSys::pollEvents() {
+Event EventSys::pollEvent() {
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        addEvent(&event);
+    if (!SDL_PollEvent(&event)) {
+        return Event{EventType::None};
     }
-}
-
-void EventSys::addEvent(const SDL_Event* event) {
-    switch (event->type) {
+    switch (event.type) {
         case SDL_QUIT:
-            events[head] = Event::Quit;
-            break;
+            return Event{EventType::Quit};
         default:
-            return;
+            return Event{EventType::None};
     }
-    head = (head + 1) % max_events;
-}
-
-Event EventSys::getEvent() {
-    if (tail == head) {
-        return Event::None;
-    }
-    Event ev{events[tail]};
-    tail = (tail + 1) % max_events;
-    return ev;
 }
