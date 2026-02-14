@@ -50,7 +50,7 @@ struct Vec3 {
     [[nodiscard]]
     Vec3 normalize() const {
         Vec3 normalized{(1.0f / length()) * *this};
-        Q_DEBUG_ASSERT(normalized.is_finite());
+        Q_DASSERT(normalized.is_finite());
         return normalized;
     }
 

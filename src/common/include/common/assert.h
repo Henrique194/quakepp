@@ -36,8 +36,11 @@
         PANIC("assertion failed: " #cond);                                     \
     }
 
+//
+// Assert only in debug builds.
+//
 #ifdef PARANOID
-#define Q_DEBUG_ASSERT Q_ASSERT
+#define Q_DASSERT Q_ASSERT
 #else
-#define Q_DEBUG_ASSERT(cond)
+#define Q_DASSERT(cond)
 #endif
