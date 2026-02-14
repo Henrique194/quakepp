@@ -36,10 +36,10 @@ static void setGLAttributes() {
 
 static SDL_Window* createWindow() {
     const char* title{PACKAGE_STRING};
-    i32 x{SDL_WINDOWPOS_CENTERED};
-    i32 y{SDL_WINDOWPOS_CENTERED};
-    i32 w{0};
-    i32 h{0};
+    int x{SDL_WINDOWPOS_CENTERED};
+    int y{SDL_WINDOWPOS_CENTERED};
+    int w{0};
+    int h{0};
     u32 flags{
         SDL_WINDOW_FULLSCREEN_DESKTOP
         | SDL_WINDOW_ALLOW_HIGHDPI
