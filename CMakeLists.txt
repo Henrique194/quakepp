@@ -19,6 +19,7 @@ if(MATH)
     link_libraries(${MATH})
 endif()
 find_package(SDL2 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
 
 add_compile_definitions($<$<CONFIG:Debug>:PARANOID>)
 configure_file(cmake/config.h.in config.h)
@@ -29,7 +30,7 @@ foreach(LIB ${LIBS})
     add_subdirectory(src/${LIB})
 endforeach()
 # Then append external libs.
-list(APPEND LIBS ${SDL2_LIBRARIES})
+list(APPEND LIBS ${SDL2_LIBRARIES} glad::glad)
 
 set(SOURCE_FILES src/main.cpp)
 if(WIN32)

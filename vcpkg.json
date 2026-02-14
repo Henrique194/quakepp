@@ -5,6 +5,10 @@
     {
       "name": "sdl2",
       "version>=": "2.32.10"
+    },
+    {
+      "name": "glad",
+      "version>=": "0.1.36#0"
     }
   ],
   "builtin-baseline": "5f4cddb220a4630a8ffc8db9270b8bf03483df60"

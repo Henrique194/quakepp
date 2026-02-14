@@ -21,28 +21,17 @@
 #include "common/assert.h"
 #include "common/types.h"
 #include "config.h"
+#include <glad/glad.h>
 
-static SDL_Renderer* createRenderer(SDL_Window* window) {
-    i32 index{-1};
-    u32 flags{SDL_RENDERER_TARGETTEXTURE};
-    SDL_Renderer* renderer{SDL_CreateRenderer(window, index, flags)};
-    if (!renderer) {
-        PANIC("Couldn't create window renderer: {}", SDL_GetError());
-    }
-
-    // Important: Set the "logical size" of the rendering context.
-    // At the same time this also defines the aspect ratio that is
-    // preserved while scaling and stretching the texture into the
-    // window.
-    SDL_RenderSetLogicalSize(renderer, 320, 240);
-
-    // Blank out the full screen area in case there is any junk in
-    // the borders that won't otherwise be overwritten.
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
-
-    return renderer;
+static void setGLAttributes() {
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 }
 
 static SDL_Window* createWindow() {
@@ -51,7 +40,11 @@ static SDL_Window* createWindow() {
     i32 y{SDL_WINDOWPOS_CENTERED};
     i32 w{0};
     i32 h{0};
-    u32 flags{SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_FULLSCREEN_DESKTOP};
+    u32 flags{
+        SDL_WINDOW_FULLSCREEN_DESKTOP
+        | SDL_WINDOW_ALLOW_HIGHDPI
+        | SDL_WINDOW_OPENGL
+    };
     SDL_Window* window{SDL_CreateWindow(title, x, y, w, h, flags)};
     if (!window) {
         PANIC("Couldn't create window: {}", SDL_GetError());
@@ -60,14 +53,26 @@ static SDL_Window* createWindow() {
     return window;
 }
 
-Window::Window()
-    : window{createWindow()}
-    , renderer{createRenderer(window)} {
+static SDL_GLContext createGLContext(SDL_Window* window) {
+    SDL_GLContext ctx{SDL_GL_CreateContext(window)};
+    if (!ctx) {
+        PANIC("Couldn't create GL context: {}", SDL_GetError());
+    }
+    if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) {
+        PANIC("Couldn't load GL functions");
+    }
+    return ctx;
+}
+
+Window::Window() {
+    setGLAttributes();
+    window = createWindow();
+    ctx = createGLContext(window);
 }
 
 Window::~Window() {
-    SDL_DestroyRenderer(renderer);
+    SDL_GL_DeleteContext(ctx);
     SDL_DestroyWindow(window);
-    renderer = nullptr;
+    ctx = nullptr;
     window = nullptr;
 }

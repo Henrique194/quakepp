@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <SDL_render.h>
 #include <SDL_video.h>
 
 class Window {
@@ -29,5 +28,5 @@ class Window {
 
   private:
     SDL_Window* window;
-    SDL_Renderer* renderer;
+    SDL_GLContext ctx;
 };
