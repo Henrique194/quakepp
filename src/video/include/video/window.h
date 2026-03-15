@@ -25,6 +25,7 @@ class Window {
   public:
     Window();
     ~Window();
+    void refresh();
 
   private:
     SDL_Window* window;

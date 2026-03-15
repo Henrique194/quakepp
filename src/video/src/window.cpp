@@ -76,3 +76,7 @@ Window::~Window() {
     ctx = nullptr;
     window = nullptr;
 }
+
+void Window::refresh() {
+    SDL_GL_SwapWindow(window);
+}

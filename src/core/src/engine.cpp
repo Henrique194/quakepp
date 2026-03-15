@@ -23,6 +23,8 @@
 #include "common/types.h"
 #include "filesystem/filesystem.h"
 #include "input/input.h"
+#include "menu/menu.h"
+#include "render/render.h"
 #include "video/video.h"
 #include "config.h"
 #include <memory>
@@ -34,9 +36,13 @@ void Engine::init(int argc, char* argv[]) {
     EventSys::init();
     VideoSys::init();
     InputSys::init();
+    Renderer::init();
+    Menu::init();
 }
 
 void Engine::shutdown() {
+    Menu::shutdown();
+    Renderer::shutdown();
     InputSys::shutdown();
     VideoSys::shutdown();
     EventSys::shutdown();
@@ -56,8 +62,14 @@ void Engine::run(int argc, char* argv[]) {
 }
 
 void Engine::runLoop() {
-    while (runFrame()) {
+    while (true) {
+        if (!runFrame()) {
+            break;
+        }
+        menu->draw();
+        video_sys->update();
         SDL_Delay(16); // 60 FPS
+
     }
 }
 

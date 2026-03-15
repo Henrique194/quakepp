@@ -21,6 +21,26 @@
 
 #include <SDL_stdinc.h>
 
+#define I8_MAX  SDL_MAX_SINT8
+#define I16_MAX SDL_MAX_SINT16
+#define I32_MAX SDL_MAX_SINT32
+#define I64_MAX SDL_MAX_SINT64
+
+#define U8_MAX  SDL_MAX_UINT8
+#define U16_MAX SDL_MAX_UINT16
+#define U32_MAX SDL_MAX_UINT32
+#define U64_MAX SDL_MAX_UINT64
+
+#define I8_MIN  SDL_MIN_SINT8
+#define I16_MIN SDL_MIN_SINT16
+#define I32_MIN SDL_MIN_SINT32
+#define I64_MIN SDL_MIN_SINT64
+
+#define U8_MIN  SDL_MIN_UINT8
+#define U16_MIN SDL_MIN_UINT16
+#define U32_MIN SDL_MIN_UINT32
+#define U64_MIN SDL_MIN_UINT64
+
 typedef Uint8 byte;
 
 typedef Uint8 u8;

@@ -25,7 +25,7 @@ add_compile_definitions($<$<CONFIG:Debug>:PARANOID>)
 configure_file(cmake/config.h.in config.h)
 
 # Add internal libs first.
-set(LIBS common core filesystem input video)
+set(LIBS common core filesystem input menu render video)
 foreach(LIB ${LIBS})
     add_subdirectory(src/${LIB})
 endforeach()
@@ -42,7 +42,7 @@ else()
     add_executable(${PACKAGE_TARNAME} ${SOURCE_FILES})
 endif()
 target_include_directories(${PACKAGE_TARNAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(${PACKAGE_TARNAME} ${LIBS} stdc++exp)
+target_link_libraries(${PACKAGE_TARNAME} ${LIBS})
 
 if(MSVC)
     set_target_properties(${PACKAGE_TARNAME} PROPERTIES LINK_FLAGS "/MANIFEST:NO")

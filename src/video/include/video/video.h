@@ -27,11 +27,14 @@ class VideoSys {
   public:
     static void init();
     static void shutdown();
+    void update();
+    u32 getWidth();
+    u32 getHeight();
 
   private:
     Window window{};
-    u32 width{0};
-    u32 height{0};
+    u32 width{3456};
+    u32 height{2168};
 };
 
 extern std::unique_ptr<VideoSys> video_sys;
