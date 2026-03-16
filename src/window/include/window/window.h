@@ -17,32 +17,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "video/video.h"
-#include "common/assert.h"
-#include <SDL.h>
+#pragma once
 
-std::unique_ptr<VideoSys> video_sys;
+#include "common/types.h"
+#include <memory>
+#include <SDL_video.h>
 
-void VideoSys::init() {
-    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
-        PANIC("Couldn't initialize video system: {}", SDL_GetError());
-    }
-    video_sys = std::make_unique<VideoSys>();
-}
+class Window {
+  public:
+    static void init();
+    static void shutdown();
+    void update();
+    u32 getWidth();
+    u32 getHeight();
 
-void VideoSys::shutdown() {
-    video_sys = nullptr;
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
-}
+  private:
+    SDL_Window* sdl_window{};
+    SDL_GLContext ctx{};
+    u32 width{3456};
+    u32 height{2168};
+};
 
-void VideoSys::update() {
-    window.refresh();
-}
-
-u32 VideoSys::getWidth() {
-    return width;
-}
-
-u32 VideoSys::getHeight() {
-    return height;
-}
+extern std::unique_ptr<Window> window;

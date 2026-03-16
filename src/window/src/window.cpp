@@ -17,11 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "video/window.h"
+#include "window/window.h"
 #include "common/assert.h"
-#include "common/types.h"
 #include "config.h"
 #include <glad/glad.h>
+#include <SDL.h>
+
+std::unique_ptr<Window> window;
 
 static void setGLAttributes() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
@@ -45,16 +47,16 @@ static SDL_Window* createWindow() {
         | SDL_WINDOW_ALLOW_HIGHDPI
         | SDL_WINDOW_OPENGL
     };
-    SDL_Window* window{SDL_CreateWindow(title, x, y, w, h, flags)};
-    if (!window) {
+    SDL_Window* sdl_window{SDL_CreateWindow(title, x, y, w, h, flags)};
+    if (!sdl_window) {
         PANIC("Couldn't create window: {}", SDL_GetError());
     }
-    SDL_SetWindowMinimumSize(window, 320, 240);
-    return window;
+    SDL_SetWindowMinimumSize(sdl_window, 320, 240);
+    return sdl_window;
 }
 
-static SDL_GLContext createGLContext(SDL_Window* window) {
-    SDL_GLContext ctx{SDL_GL_CreateContext(window)};
+static SDL_GLContext createGLContext(SDL_Window* sdl_window) {
+    SDL_GLContext ctx{SDL_GL_CreateContext(sdl_window)};
     if (!ctx) {
         PANIC("Couldn't create GL context: {}", SDL_GetError());
     }
@@ -64,19 +66,31 @@ static SDL_GLContext createGLContext(SDL_Window* window) {
     return ctx;
 }
 
-Window::Window() {
+void Window::init() {
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
+        PANIC("Couldn't initialize video system: {}", SDL_GetError());
+    }
     setGLAttributes();
-    window = createWindow();
-    ctx = createGLContext(window);
+    window = std::make_unique<Window>();
+    window->sdl_window = createWindow();
+    window->ctx = createGLContext(window->sdl_window);
 }
 
-Window::~Window() {
-    SDL_GL_DeleteContext(ctx);
-    SDL_DestroyWindow(window);
-    ctx = nullptr;
+void Window::shutdown() {
+    SDL_GL_DeleteContext(window->ctx);
+    SDL_DestroyWindow(window->sdl_window);
     window = nullptr;
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void Window::refresh() {
-    SDL_GL_SwapWindow(window);
+void Window::update() {
+    SDL_GL_SwapWindow(sdl_window);
+}
+
+u32 Window::getWidth() {
+    return width;
+}
+
+u32 Window::getHeight() {
+    return height;
 }

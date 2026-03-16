@@ -1,7 +1,6 @@
-set(LIB video)
+set(LIB window)
 
 add_library(${LIB} STATIC
-    src/video.cpp
     src/window.cpp
 )
 

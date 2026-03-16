@@ -19,7 +19,7 @@
 
 #include "render/render.h"
 #include "common/assert.h"
-#include "video/video.h"
+#include "window/window.h"
 #include <glad/glad.h>
 
 std::unique_ptr<Renderer> renderer;
@@ -62,7 +62,7 @@ void Renderer::setLogicalSize(u32 width, u32 height) {
 
 void Renderer::init() {
     renderer = std::make_unique<Renderer>();
-    renderer->setLogicalSize(video_sys->getWidth(), video_sys->getHeight());
+    renderer->setLogicalSize(window->getWidth(), window->getHeight());
 }
 
 void Renderer::shutdown() {
@@ -70,8 +70,8 @@ void Renderer::shutdown() {
 }
 
 void Renderer::drawTransPic(u32 x, u32 y, QPic* pic) {
-    auto width{video_sys->getWidth()};
-    auto height{video_sys->getHeight()};
+    auto width{window->getWidth()};
+    auto height{window->getHeight()};
     if ((x + pic->width) > width || (y + pic->height) > height) {
         PANIC("bad coordinates");
     }

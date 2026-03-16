@@ -25,7 +25,7 @@
 #include "common/types.h"
 #include "filesystem/filesystem.h"
 #include "render/render.h"
-#include "video/video.h"
+#include "window/window.h"
 #include <glad/glad.h>
 
 std::unique_ptr<Menu> menu;
