@@ -36,13 +36,11 @@ void Engine::init(int argc, char* argv[]) {
     EventSys::init();
     Window::init();
     InputSys::init();
-    Renderer::init();
     Menu::init();
 }
 
 void Engine::shutdown() {
     Menu::shutdown();
-    Renderer::shutdown();
     InputSys::shutdown();
     Window::shutdown();
     EventSys::shutdown();

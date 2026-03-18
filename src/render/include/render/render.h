@@ -20,6 +20,8 @@
 #pragma once
 
 #include "common/types.h"
+#include <SDL_video.h>
+#include <expected>
 #include <memory>
 
 #define MAX_GLTEXTURES 1024
@@ -59,13 +61,24 @@ struct GLTexture {
 
 class Renderer {
   public:
-    static void init();
-    static void shutdown();
-    void drawTransPic(u32 x, u32 y, QPic* pic);
-    int loadPicTexture(QPic* pic);
+    virtual ~Renderer() = default;
+    static std::expected<std::unique_ptr<Renderer>, const char*> create(SDL_Window* sdl_window);
+    virtual void present() = 0;
+    virtual void setLogicalSize(u32 width, u32 height) = 0;
+    virtual void drawTransPic(u32 x, u32 y, QPic* pic) = 0;
+    virtual int loadPicTexture(QPic* pic) = 0;
+};
+
+class GL1Renderer: public Renderer {
+  public:
+    ~GL1Renderer() override;
+    static std::expected<std::unique_ptr<Renderer>, const char*> create(SDL_Window* sdl_window);
+    void present() override;
+    void setLogicalSize(u32 width, u32 height) override;
+    void drawTransPic(u32 x, u32 y, QPic* pic) override;
+    int loadPicTexture(QPic* pic) override;
 
   private:
-    void setLogicalSize(u32 width, u32 height);
     void drawPic(int x, int y, QPic* pic);
 
     //
@@ -84,9 +97,9 @@ class Renderer {
         bool alpha
     );
 
+    SDL_Window* sdl_window{};
+    SDL_GLContext ctx{};
     u32 current_tex{U32_MAX};
     GLTexture gltextures[MAX_GLTEXTURES]{};
     int numgltextures{0};
 };
-
-extern std::unique_ptr<Renderer> renderer;

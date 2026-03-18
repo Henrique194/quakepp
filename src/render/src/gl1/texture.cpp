@@ -267,7 +267,7 @@ static void GL_Upload8(
     GL_Upload32(trans, width, height, mipmap, alpha);
 }
 
-int Renderer::loadTexture(
+int GL1Renderer::loadTexture(
     const char* identifier,
     int width,
     int height,
@@ -298,11 +298,11 @@ int Renderer::loadTexture(
     return texture_extension_number - 1;
 }
 
-int Renderer::loadPicTexture(QPic* pic) {
+int GL1Renderer::loadPicTexture(QPic* pic) {
     return loadTexture("", pic->width, pic->height, pic->data, false, true);
 }
 
-void Renderer::bindTexture(u32 tex) {
+void GL1Renderer::bindTexture(u32 tex) {
     if (current_tex == tex) {
         return;
     }
@@ -310,7 +310,7 @@ void Renderer::bindTexture(u32 tex) {
     glBindTexture(GL_TEXTURE_2D, (GLuint) tex);
 }
 
-GLTexture* Renderer::findTexture(
+GLTexture* GL1Renderer::findTexture(
     const char* identifier,
     int width,
     int height

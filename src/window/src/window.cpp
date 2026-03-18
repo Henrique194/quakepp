@@ -25,17 +25,6 @@
 
 std::unique_ptr<Window> window;
 
-static void setGLAttributes() {
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-}
-
 static SDL_Window* createWindow() {
     const char* title{PACKAGE_STRING};
     int x{SDL_WINDOWPOS_CENTERED};
@@ -55,36 +44,24 @@ static SDL_Window* createWindow() {
     return sdl_window;
 }
 
-static SDL_GLContext createGLContext(SDL_Window* sdl_window) {
-    SDL_GLContext ctx{SDL_GL_CreateContext(sdl_window)};
-    if (!ctx) {
-        PANIC("Couldn't create GL context: {}", SDL_GetError());
-    }
-    if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) {
-        PANIC("Couldn't load GL functions");
-    }
-    return ctx;
-}
-
 void Window::init() {
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
         PANIC("Couldn't initialize video system: {}", SDL_GetError());
     }
-    setGLAttributes();
     window = std::make_unique<Window>();
     window->sdl_window = createWindow();
-    window->ctx = createGLContext(window->sdl_window);
+    auto renderer{GL1Renderer::create(window->sdl_window)};
+    if (!renderer) {
+        PANIC("Couldn't create renderer: {}", renderer.error());
+    }
+    window->renderer = std::move(*renderer);
+    window->setLogicalSize(window->getWidth(), window->getHeight());
 }
 
 void Window::shutdown() {
-    SDL_GL_DeleteContext(window->ctx);
     SDL_DestroyWindow(window->sdl_window);
     window = nullptr;
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
-}
-
-void Window::update() {
-    SDL_GL_SwapWindow(sdl_window);
 }
 
 u32 Window::getWidth() {
@@ -93,4 +70,20 @@ u32 Window::getWidth() {
 
 u32 Window::getHeight() {
     return height;
+}
+
+void Window::update() {
+    renderer->present();
+}
+
+void Window::setLogicalSize(u32 width, u32 height) {
+    renderer->setLogicalSize(width, height);
+}
+
+void Window::drawTransPic(u32 x, u32 y, QPic* pic) {
+    renderer->drawTransPic(x, y, pic);
+}
+
+int Window::loadPicTexture(QPic* pic) {
+    return renderer->loadPicTexture(pic);
 }

@@ -1,9 +1,11 @@
 set(LIB render)
 
-add_library(${LIB} STATIC
-    src/render.cpp
-    src/texture.cpp
+set(GL1_DRIVER
+    src/gl1/render.cpp
+    src/gl1/texture.cpp
 )
+
+add_library(${LIB} STATIC ${GL1_DRIVER})
 
 target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR})
 target_include_directories(${LIB} PUBLIC "./include")

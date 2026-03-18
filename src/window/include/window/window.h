@@ -20,6 +20,7 @@
 #pragma once
 
 #include "common/types.h"
+#include "render/render.h"
 #include <memory>
 #include <SDL_video.h>
 
@@ -31,9 +32,13 @@ class Window {
     u32 getWidth();
     u32 getHeight();
 
+    void setLogicalSize(u32 width, u32 height);
+    void drawTransPic(u32 x, u32 y, QPic* pic);
+    int loadPicTexture(QPic* pic);
+
   private:
     SDL_Window* sdl_window{};
-    SDL_GLContext ctx{};
+    std::unique_ptr<Renderer> renderer{};
     u32 width{3456};
     u32 height{2168};
 };

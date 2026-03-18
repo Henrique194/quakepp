@@ -119,7 +119,7 @@ static QPic* Draw_CachePic(const char* path) {
     pic->pic.height = dat->height;
 
     GLPic* gl = (GLPic*) pic->pic.data;
-    gl->texnum = renderer->loadPicTexture(dat);
+    gl->texnum = window->loadPicTexture(dat);
     gl->sl = 0;
     gl->sh = 1;
     gl->tl = 0;
@@ -129,5 +129,5 @@ static QPic* Draw_CachePic(const char* path) {
 }
 
 void Menu::draw() {
-    renderer->drawTransPic(16, 4, Draw_CachePic("gfx/qplaque.lmp"));
+    window->drawTransPic(16, 4, Draw_CachePic("gfx/qplaque.lmp"));
 }
