@@ -61,39 +61,38 @@ void GL1Renderer::present() {
 }
 
 void GL1Renderer::setLogicalSize(u32 width, u32 height) {
-    glClearColor(1, 0, 0, 0);
+    int logical_w = (int) width;
+    int logical_h = (int) height;
+    int real_w = (int) window->getWidth();
+    int real_h = (int) window->getHeight();
+    float want_aspect = (float) logical_w / logical_h;
+    float real_aspect = (float) real_w / real_h;
+    SDL_Rect viewport{};
+    if (SDL_fabs(want_aspect - real_aspect) < 0.0001) {
+        // Aspect ratios are the same.
+        viewport.w = real_w;
+        viewport.h = real_h;
+    } else if (want_aspect > real_aspect) {
+        // Wider aspect ratio, so letterbox it.
+        float scale = (float) real_w / logical_w;
+        viewport.x = 0;
+        viewport.w = real_w;
+        viewport.h = (int) SDL_floor(logical_h * scale);
+        viewport.y = (real_h - viewport.h) / 2;
+    } else {
+        // Narrower aspect ratio, so use side-bars.
+        float scale = (float) real_h / logical_h;
+        viewport.y = 0;
+        viewport.h = real_h;
+        viewport.w = (int) SDL_floor(logical_w * scale);
+        viewport.x = (real_w - viewport.w) / 2;
+    }
     glEnable(GL_TEXTURE_2D);
-
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.666);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glShadeModel(GL_FLAT);
-
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-    glViewport(0, 0, width, height);
-
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-
-    float scale = std::min(width / 320.0f, height / 240.0f);
-    glOrtho(0, width / scale, height / scale, 0, -99999, 99999);
-
+    glViewport(viewport.x, viewport.y, viewport.w, viewport.h);
+    glOrtho(0, 320, 200, 0, 0, 1);
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glScalef(1.0f, 1.2f, 1.0f);
-
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
 }
 
 void GL1Renderer::drawTransPic(u32 x, u32 y, QPic* pic) {

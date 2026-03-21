@@ -25,8 +25,8 @@ static float gl_picmip = 0;
 static float gl_max_size = 1024;
 static int gl_solid_format = 3;
 static int gl_alpha_format = 4;
-static int gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
-static int gl_filter_max = GL_LINEAR;
+static int gl_filter_min = GL_NEAREST;
+static int gl_filter_max = GL_NEAREST;
 static int texture_extension_number = 1;
 
 static const u32 d_8to24table[256] = {
@@ -121,7 +121,7 @@ static void GL_ResampleTexture(
 }
 
 static void GL_Upload32(
-    unsigned* data,
+    const u32* data,
     int width,
     int height,
     bool mipmap,
@@ -145,7 +145,6 @@ static void GL_Upload32(
     if (scaled_height > (int) gl_max_size) {
         scaled_height = (int) gl_max_size;
     }
-
     if (scaled_width * scaled_height > sizeof(scaled) / 4) {
         PANIC("GL_LoadTexture: too big");
     }
@@ -228,28 +227,23 @@ done:
     }
 }
 
-static void GL_Upload8(
-    byte* data,
-    int width,
-    int height,
-    bool mipmap,
-    bool alpha
-) {
+static void GL_Upload8(const QPic* pic, bool mipmap, bool alpha) {
     static u32 trans[640 * 480]; // FIXME, temporary
 
-    int s = width * height;
-    // if there are no transparent pixels, make it a 3 component
-    // texture even if it was specified as otherwise
+    int s = pic->width * pic->height;
     if (alpha) {
-        bool noalpha = true;
+        // If there are no transparent pixels, make it a
+        // 3 component texture even if it was specified
+        // as otherwise.
+        bool has_alpha = false;
         for (int i = 0; i < s; i++) {
-            int p = data[i];
+            int p = pic->data[i];
             if (p == 255) {
-                noalpha = false;
+                has_alpha = true;
             }
             trans[i] = d_8to24table[p];
         }
-        if (alpha && noalpha) {
+        if (alpha && !has_alpha) {
             alpha = false;
         }
     } else {
@@ -257,26 +251,24 @@ static void GL_Upload8(
             PANIC("GL_Upload8: s&3");
         }
         for (int i = 0; i < s; i += 4) {
-            trans[i] = d_8to24table[data[i]];
-            trans[i + 1] = d_8to24table[data[i + 1]];
-            trans[i + 2] = d_8to24table[data[i + 2]];
-            trans[i + 3] = d_8to24table[data[i + 3]];
+            trans[i] = d_8to24table[pic->data[i]];
+            trans[i + 1] = d_8to24table[pic->data[i + 1]];
+            trans[i + 2] = d_8to24table[pic->data[i + 2]];
+            trans[i + 3] = d_8to24table[pic->data[i + 3]];
         }
     }
 
-    GL_Upload32(trans, width, height, mipmap, alpha);
+    GL_Upload32(trans, pic->width, pic->height, mipmap, alpha);
 }
 
 int GL1Renderer::loadTexture(
     const char* identifier,
-    int width,
-    int height,
-    byte* data,
+    const QPic* pic,
     bool mipmap,
     bool alpha
 ) {
     // see if the texture is already present.
-    GLTexture* glt{findTexture(identifier, width, height)};
+    GLTexture* glt{findTexture(identifier, pic->width, pic->height)};
     if (glt) {
         return glt->texnum;
     }
@@ -285,13 +277,13 @@ int GL1Renderer::loadTexture(
 
     strcpy(glt->identifier, identifier);
     glt->texnum = texture_extension_number;
-    glt->width = width;
-    glt->height = height;
+    glt->width = pic->width;
+    glt->height = pic->height;
     glt->mipmap = mipmap;
 
     bindTexture(texture_extension_number);
 
-    GL_Upload8(data, width, height, mipmap, alpha);
+    GL_Upload8(pic, mipmap, alpha);
 
     texture_extension_number++;
 
@@ -299,7 +291,7 @@ int GL1Renderer::loadTexture(
 }
 
 int GL1Renderer::loadPicTexture(QPic* pic) {
-    return loadTexture("", pic->width, pic->height, pic->data, false, true);
+    return loadTexture("", pic, false, true);
 }
 
 void GL1Renderer::bindTexture(u32 tex) {
@@ -319,7 +311,7 @@ GLTexture* GL1Renderer::findTexture(
         return nullptr;
     }
     for (int i = 0; i < numgltextures; i++) {
-        GLTexture* glt = &gltextures[i];
+        const GLTexture* glt{&gltextures[i]};
         if (strcmp(identifier, glt->identifier)) {
             continue;
         }

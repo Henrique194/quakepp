@@ -55,7 +55,7 @@ void Window::init() {
         PANIC("Couldn't create renderer: {}", renderer.error());
     }
     window->renderer = std::move(*renderer);
-    window->setLogicalSize(window->getWidth(), window->getHeight());
+    window->setLogicalSize(320, 240);
 }
 
 void Window::shutdown() {

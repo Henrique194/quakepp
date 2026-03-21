@@ -43,7 +43,7 @@ struct GLPic {
     int texnum;
     // Texture start coordinates.
     float sl, tl;
-    // tTexture end coordinates.
+    // Texture end coordinates.
     float sh, th;
 };
 
@@ -90,9 +90,7 @@ class GL1Renderer: public Renderer {
 
     int loadTexture(
         const char* identifier,
-        int width,
-        int height,
-        byte* data,
+        const QPic* pic,
         bool mipmap,
         bool alpha
     );
@@ -102,4 +100,8 @@ class GL1Renderer: public Renderer {
     u32 current_tex{U32_MAX};
     GLTexture gltextures[MAX_GLTEXTURES]{};
     int numgltextures{0};
+};
+
+class SoftRenderer: public Renderer {
+
 };
