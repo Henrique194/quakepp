@@ -23,8 +23,10 @@
 #include <SDL_video.h>
 #include <expected>
 #include <memory>
+#include <string>
 
-#define MAX_GLTEXTURES 1024
+class Renderer;
+using RendererResult = std::expected<std::unique_ptr<Renderer>, std::string>;
 
 //
 // Quake picture format (.lmp).
@@ -35,73 +37,12 @@ struct QPic {
     byte data[4]; // variably sized
 };
 
-//
-// OpenGL representation of the picture.
-//
-struct GLPic {
-    // OpenGL texture ID.
-    int texnum;
-    // Texture start coordinates.
-    float sl, tl;
-    // Texture end coordinates.
-    float sh, th;
-};
-
-//
-// Global texture registry.
-// It prevents loading the same texture twice.
-//
-struct GLTexture {
-    int texnum;
-    char identifier[64];
-    int width;
-    int height;
-    bool mipmap;
-};
-
 class Renderer {
   public:
+    static RendererResult create(SDL_Window* sdl_window);
     virtual ~Renderer() = default;
-    static std::expected<std::unique_ptr<Renderer>, const char*> create(SDL_Window* sdl_window);
     virtual void present() = 0;
     virtual void setLogicalSize(u32 width, u32 height) = 0;
     virtual void drawTransPic(u32 x, u32 y, QPic* pic) = 0;
     virtual int loadPicTexture(QPic* pic) = 0;
-};
-
-class GL1Renderer: public Renderer {
-  public:
-    ~GL1Renderer() override;
-    static std::expected<std::unique_ptr<Renderer>, const char*> create(SDL_Window* sdl_window);
-    void present() override;
-    void setLogicalSize(u32 width, u32 height) override;
-    void drawTransPic(u32 x, u32 y, QPic* pic) override;
-    int loadPicTexture(QPic* pic) override;
-
-  private:
-    void drawPic(int x, int y, QPic* pic);
-
-    //
-    // Avoid binding an OpenGL texture twice.
-    //
-    void bindTexture(u32 tex);
-
-    GLTexture* findTexture(const char* identifier, int width, int height);
-
-    int loadTexture(
-        const char* identifier,
-        const QPic* pic,
-        bool mipmap,
-        bool alpha
-    );
-
-    SDL_Window* sdl_window{};
-    SDL_GLContext ctx{};
-    u32 current_tex{U32_MAX};
-    GLTexture gltextures[MAX_GLTEXTURES]{};
-    int numgltextures{0};
-};
-
-class SoftRenderer: public Renderer {
-
 };

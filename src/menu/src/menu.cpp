@@ -20,13 +20,11 @@
 #include "menu/menu.h"
 #include "common/assert.h"
 #include "common/byte_swap.h"
-#include "common/io.h"
 #include "common/try.h"
 #include "common/types.h"
 #include "filesystem/filesystem.h"
-#include "render/render.h"
+#include "render/gl1.h"
 #include "window/window.h"
-#include <glad/glad.h>
 
 std::unique_ptr<Menu> menu;
 

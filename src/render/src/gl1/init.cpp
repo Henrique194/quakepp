@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "render/render.h"
+#include "render/gl1.h"
 #include "common/assert.h"
 #include <glad/glad.h>
 
@@ -43,7 +43,7 @@ static SDL_GLContext createGLContext(SDL_Window* sdl_window) {
     return ctx;
 }
 
-std::expected<std::unique_ptr<Renderer>, const char*> GL1Renderer::create(SDL_Window* sdl_window) {
+RendererResult GL1Renderer::create(SDL_Window* sdl_window) {
     setGLAttributes();
     auto renderer{std::make_unique<GL1Renderer>()};
     renderer->sdl_window = sdl_window;
