@@ -26,11 +26,21 @@
 #include <string_view>
 #include <vector>
 
+//
+// Quake picture format (.lmp).
+//
+struct QPic {
+    i32 width;
+    i32 height;
+    std::vector<byte> data;
+};
+
 class FileSys {
   public:
     static void init();
     static void shutdown();
     ResultIO<File> openFile(std::string_view name);
+    ResultIO<QPic> loadPicture(std::string_view name);
 
   private:
     void addGameDir(std::string_view dir);

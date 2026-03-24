@@ -71,7 +71,7 @@ void GL1Renderer::drawTransPic(u32 x, u32 y, QPic* pic) {
 }
 
 void GL1Renderer::drawPic(int x, int y, QPic* pic) {
-    GLPic* gl = (GLPic*) pic->data;
+    GLPic* gl = (GLPic*) pic->data.data();
     glColor4f(1, 1, 1, 1);
     bindTexture(gl->texnum);
     glBegin(GL_QUADS);

@@ -18,6 +18,8 @@
  */
 
 #include "filesystem/filesystem.h"
+#include "common/byte_swap.h"
+#include "common/try.h"
 #include <ranges>
 
 //
@@ -50,4 +52,16 @@ ResultIO<File> FileSys::openFile(std::string_view name) {
         }
     }
     return std::unexpected{"Couldn't open file"};
+}
+
+ResultIO<QPic> FileSys::loadPicture(std::string_view name) {
+    TRY(file, openFile(name));
+    TRY(len, file.size());
+    i32 width{0};
+    i32 height{0};
+    std::vector<byte> data(len - 8);
+    TRY(file.read(&width, 4));
+    TRY(file.read(&height, 4));
+    TRY(file.read(data.data(), data.size()));
+    return QPic{Q_Swap32LE(width), Q_Swap32LE(height), data};
 }

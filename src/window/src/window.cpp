@@ -85,6 +85,6 @@ void Window::drawTransPic(u32 x, u32 y, QPic* pic) {
     renderer->drawTransPic(x, y, pic);
 }
 
-int Window::loadPicTexture(QPic* pic) {
+int Window::loadPicTexture(QPic& pic) {
     return renderer->loadPicTexture(pic);
 }

@@ -63,7 +63,7 @@ ResultIO<File> PakFile::openFile(std::string_view name) {
     if (!entry) {
         return std::unexpected{"Couldn't find file in PAK"};
     }
-    TRY(file, File::open(path, "rb"));
+    TRY(file, File::open(path, "rb", entry->file_len));
     TRY(file.seek(entry->file_pos, File::SeekSet));
     return file;
 }

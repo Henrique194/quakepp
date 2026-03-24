@@ -34,7 +34,7 @@ class Window {
 
     void setLogicalSize(u32 width, u32 height);
     void drawTransPic(u32 x, u32 y, QPic* pic);
-    int loadPicTexture(QPic* pic);
+    int loadPicTexture(QPic& pic);
 
   private:
     SDL_Window* sdl_window{};

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "common/types.h"
+#include "filesystem/filesystem.h"
 #include <SDL_video.h>
 #include <expected>
 #include <memory>
@@ -28,15 +29,6 @@
 class Renderer;
 using RendererResult = std::expected<std::unique_ptr<Renderer>, std::string>;
 
-//
-// Quake picture format (.lmp).
-//
-struct QPic {
-    int width;
-    int height;
-    byte data[4]; // variably sized
-};
-
 class Renderer {
   public:
     static RendererResult create(SDL_Window* sdl_window);
@@ -44,5 +36,5 @@ class Renderer {
     virtual void present() = 0;
     virtual void setLogicalSize(u32 width, u32 height) = 0;
     virtual void drawTransPic(u32 x, u32 y, QPic* pic) = 0;
-    virtual int loadPicTexture(QPic* pic) = 0;
+    virtual int loadPicTexture(QPic& pic) = 0;
 };

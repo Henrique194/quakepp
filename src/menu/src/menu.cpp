@@ -48,47 +48,10 @@ struct CachePic {
     byte padding[32]; // for appended glpic
 };
 
-//
-// to avoid unnecessary texture sets
-//
-
 #define MAX_CACHED_PICS 128
 static CachePic menu_cachepics[MAX_CACHED_PICS];
 static int menu_numcachepics = 0;
 
-
-static void SwapPic(QPic* pic) {
-    pic->width = Q_Swap32LE(pic->width);
-    pic->height = Q_Swap32LE(pic->height);
-}
-
-static byte* COM_LoadFile(const char* path, int usehunk) {
-    // look for it in the filesystem or pack files
-    auto file{file_sys->openFile(path)};
-    if (!file) {
-        return nullptr;
-    }
-    int len = (int) *file->size();
-    byte* buf{};
-    switch (usehunk) {
-        case 2:
-            buf = new byte[len + 1];
-            break;
-        default:
-            PANIC("COM_LoadFile: bad usehunk");
-            return nullptr;
-    }
-    if (!buf) {
-        PANIC("COM_LoadFile: not enough space for {}", path);
-    }
-    buf[len] = 0;
-    file->read(buf, len);
-    return buf;
-}
-
-static byte* COM_LoadTempFile(const char* path) {
-    return COM_LoadFile(path, 2);
-}
 
 static QPic* Draw_CachePic(const char* path) {
     for (int i = 0; i < menu_numcachepics; i++) {
@@ -101,23 +64,24 @@ static QPic* Draw_CachePic(const char* path) {
         PANIC("menu_numcachepics == MAX_CACHED_PICS");
     }
     CachePic* pic = &menu_cachepics[menu_numcachepics];
+    pic->pic.data = std::vector<byte>(32);
     menu_numcachepics++;
 
     //
     // load the pic from disk
     //
-    QPic* dat = (QPic*) COM_LoadTempFile(path);
+    auto dat{file_sys->loadPicture(path)};
     if (!dat) {
         PANIC("Draw_CachePic: failed to load {}", path);
     }
-    SwapPic(dat);
+    QPic qpic = std::move(*dat);
 
     strcpy(pic->name, path);
-    pic->pic.width = dat->width;
-    pic->pic.height = dat->height;
+    pic->pic.width = qpic.width;
+    pic->pic.height = qpic.height;
 
-    GLPic* gl = (GLPic*) pic->pic.data;
-    gl->texnum = window->loadPicTexture(dat);
+    GLPic* gl = (GLPic*) pic->pic.data.data();
+    gl->texnum = window->loadPicTexture(qpic);
     gl->sl = 0;
     gl->sh = 1;
     gl->tl = 0;

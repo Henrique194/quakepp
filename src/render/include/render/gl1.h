@@ -54,7 +54,7 @@ class GL1Renderer: public Renderer {
     void present() override;
     void setLogicalSize(u32 width, u32 height) override;
     void drawTransPic(u32 x, u32 y, QPic* pic) override;
-    int loadPicTexture(QPic* pic) override;
+    int loadPicTexture(QPic& pic) override;
 
   private:
     void drawPic(int x, int y, QPic* pic);
@@ -68,7 +68,7 @@ class GL1Renderer: public Renderer {
 
     int loadTexture(
         const char* identifier,
-        const QPic* pic,
+        const QPic& pic,
         bool mipmap,
         bool alpha
     );

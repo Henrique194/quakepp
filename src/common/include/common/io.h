@@ -39,9 +39,10 @@ class File {
 
     static ResultIO<File> open(
         std::string_view path,
-        std::string_view mode
+        std::string_view mode,
+        i64 len = 0
     ) {
-        File file{path, mode};
+        File file{path, mode, len};
         if (!file.stream) {
             return std::unexpected{SDL_GetError()};
         }
@@ -50,6 +51,7 @@ class File {
 
     File(File&& other) noexcept
         : stream{other.stream}
+        , len{other.len}
     {
         other.stream = nullptr;
     }
@@ -85,7 +87,6 @@ class File {
 
     ResultIO<i64> tell() {
         Q_ASSERT(stream != nullptr);
-        SDL_ClearError();
         i64 pos{SDL_RWtell(stream)};
         if (pos < 0) {
             return std::unexpected{SDL_GetError()};
@@ -95,7 +96,6 @@ class File {
 
     ResultIO<i64> seek(i64 offset, int whence) {
         Q_ASSERT(stream != nullptr);
-        SDL_ClearError();
         i64 pos{SDL_RWseek(stream, offset, whence)};
         if (pos < 0) {
             return std::unexpected{SDL_GetError()};
@@ -105,12 +105,14 @@ class File {
 
     ResultIO<i64> size() {
         Q_ASSERT(stream != nullptr);
-        SDL_ClearError();
-        i64 size{SDL_RWsize(stream)};
-        if (size < 0) {
+        if (len > 0) {
+            return len;
+        }
+        len = SDL_RWsize(stream);
+        if (len < 0) {
             return std::unexpected{SDL_GetError()};
         }
-        return SDL_RWsize(stream);
+        return len;
     }
 
     File& operator=(const File&) = delete;
@@ -125,9 +127,11 @@ class File {
     }
 
   private:
-    File(std::string_view path, std::string_view mode)
-        : stream{SDL_RWFromFile(path.data(), mode.data())} {
+    File(std::string_view path, std::string_view mode, i64 len)
+        : stream{SDL_RWFromFile(path.data(), mode.data())}
+        , len{len} {
     }
 
     SDL_RWops* stream;
+    i64 len;
 };

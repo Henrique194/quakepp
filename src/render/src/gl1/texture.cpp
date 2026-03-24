@@ -227,17 +227,17 @@ done:
     }
 }
 
-static void GL_Upload8(const QPic* pic, bool mipmap, bool alpha) {
+static void GL_Upload8(const QPic& pic, bool mipmap, bool alpha) {
     static u32 trans[640 * 480]; // FIXME, temporary
 
-    int s = pic->width * pic->height;
+    int s = pic.width * pic.height;
     if (alpha) {
         // If there are no transparent pixels, make it a
         // 3 component texture even if it was specified
         // as otherwise.
         bool has_alpha = false;
         for (int i = 0; i < s; i++) {
-            int p = pic->data[i];
+            int p = pic.data[i];
             if (p == 255) {
                 has_alpha = true;
             }
@@ -251,24 +251,24 @@ static void GL_Upload8(const QPic* pic, bool mipmap, bool alpha) {
             PANIC("GL_Upload8: s&3");
         }
         for (int i = 0; i < s; i += 4) {
-            trans[i] = d_8to24table[pic->data[i]];
-            trans[i + 1] = d_8to24table[pic->data[i + 1]];
-            trans[i + 2] = d_8to24table[pic->data[i + 2]];
-            trans[i + 3] = d_8to24table[pic->data[i + 3]];
+            trans[i] = d_8to24table[pic.data[i]];
+            trans[i + 1] = d_8to24table[pic.data[i + 1]];
+            trans[i + 2] = d_8to24table[pic.data[i + 2]];
+            trans[i + 3] = d_8to24table[pic.data[i + 3]];
         }
     }
 
-    GL_Upload32(trans, pic->width, pic->height, mipmap, alpha);
+    GL_Upload32(trans, pic.width, pic.height, mipmap, alpha);
 }
 
 int GL1Renderer::loadTexture(
     const char* identifier,
-    const QPic* pic,
+    const QPic& pic,
     bool mipmap,
     bool alpha
 ) {
     // see if the texture is already present.
-    GLTexture* glt{findTexture(identifier, pic->width, pic->height)};
+    GLTexture* glt{findTexture(identifier, pic.width, pic.height)};
     if (glt) {
         return glt->texnum;
     }
@@ -277,8 +277,8 @@ int GL1Renderer::loadTexture(
 
     strcpy(glt->identifier, identifier);
     glt->texnum = texture_extension_number;
-    glt->width = pic->width;
-    glt->height = pic->height;
+    glt->width = pic.width;
+    glt->height = pic.height;
     glt->mipmap = mipmap;
 
     bindTexture(texture_extension_number);
@@ -290,7 +290,7 @@ int GL1Renderer::loadTexture(
     return texture_extension_number - 1;
 }
 
-int GL1Renderer::loadPicTexture(QPic* pic) {
+int GL1Renderer::loadPicTexture(QPic& pic) {
     return loadTexture("", pic, false, true);
 }
 
