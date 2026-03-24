@@ -20,6 +20,7 @@
 #pragma once
 
 #include "render.h"
+#include <glad/glad.h>
 
 #define MAX_GLTEXTURES 1024
 
@@ -47,10 +48,35 @@ struct GLTexture {
     bool mipmap;
 };
 
+class GLContext {
+  public:
+    explicit GLContext(SDL_Window* sdl_window);
+    ~GLContext();
+
+    void begin(GLenum mode);
+    void bindTexture(GLenum target, GLuint texture);
+    void color4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+    void enable(GLenum cap);
+    void end();
+    void loadIdentity();
+    void matrixMode(GLenum mode);
+    void ortho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
+    void texCoord2f(GLfloat s, GLfloat t);
+    void texImage2D(GLenum target, GLint level, GLint internal_format, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void* pixels);
+    void texParameterf(GLenum target, GLenum pname, GLfloat param);
+    void vertex2f(GLfloat x, GLfloat y);
+    void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
+
+  private:
+    SDL_GLContext ctx{};
+};
+
 class GL1Renderer: public Renderer {
   public:
     static RendererResult create(SDL_Window* sdl_window);
-    ~GL1Renderer() override;
+    GL1Renderer(SDL_Window* sdl_window);
+    ~GL1Renderer() override = default;
+
     void present() override;
     void setLogicalSize(u32 width, u32 height) override;
     void drawTransPic(u32 x, u32 y, QPic* pic) override;
@@ -73,9 +99,20 @@ class GL1Renderer: public Renderer {
         bool alpha
     );
 
+    void upload8(const QPic& pic, bool mipmap, bool alpha);
+    void upload32(const u32* data, int width, int height, bool mipmap, bool alpha);
+
     SDL_Window* sdl_window{};
-    SDL_GLContext ctx{};
+    GLContext gl;
     u32 current_tex{U32_MAX};
     GLTexture gltextures[MAX_GLTEXTURES]{};
     int numgltextures{0};
+
+    float gl_picmip{0};
+    float gl_max_size{1024};
+    int gl_solid_format{3};
+    int gl_alpha_format{4};
+    int gl_filter_min{GL_NEAREST};
+    int gl_filter_max{GL_NEAREST};
+    int texture_extension_number{1};
 };

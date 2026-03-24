@@ -21,14 +21,6 @@
 #include "common/assert.h"
 #include <glad/glad.h>
 
-static float gl_picmip = 0;
-static float gl_max_size = 1024;
-static int gl_solid_format = 3;
-static int gl_alpha_format = 4;
-static int gl_filter_min = GL_NEAREST;
-static int gl_filter_max = GL_NEAREST;
-static int texture_extension_number = 1;
-
 static const u32 d_8to24table[256] = {
     4278190080, 4279176975, 4280229663, 4281282351, 4282335039, 4283124555,
     4284177243, 4285229931, 4286282619, 4287335307, 4288387995, 4289440683,
@@ -120,7 +112,7 @@ static void GL_ResampleTexture(
     }
 }
 
-static void GL_Upload32(
+void GL1Renderer::upload32(
     const u32* data,
     int width,
     int height,
@@ -153,7 +145,7 @@ static void GL_Upload32(
 
     if (scaled_width == width && scaled_height == height) {
         if (!mipmap) {
-            glTexImage2D(
+            gl.texImage2D(
                 GL_TEXTURE_2D,
                 0,
                 samples,
@@ -178,7 +170,7 @@ static void GL_Upload32(
         );
     }
 
-    glTexImage2D(
+    gl.texImage2D(
         GL_TEXTURE_2D,
         0,
         samples,
@@ -202,7 +194,7 @@ static void GL_Upload32(
                 scaled_height = 1;
             }
             miplevel++;
-            glTexImage2D(
+            gl.texImage2D(
                 GL_TEXTURE_2D,
                 miplevel,
                 samples,
@@ -219,15 +211,15 @@ static void GL_Upload32(
 done:
 
     if (mipmap) {
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+        gl.texParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+        gl.texParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
     } else {
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_max);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+        gl.texParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_max);
+        gl.texParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
     }
 }
 
-static void GL_Upload8(const QPic& pic, bool mipmap, bool alpha) {
+void GL1Renderer::upload8(const QPic& pic, bool mipmap, bool alpha) {
     static u32 trans[640 * 480]; // FIXME, temporary
 
     int s = pic.width * pic.height;
@@ -258,7 +250,7 @@ static void GL_Upload8(const QPic& pic, bool mipmap, bool alpha) {
         }
     }
 
-    GL_Upload32(trans, pic.width, pic.height, mipmap, alpha);
+    upload32(trans, pic.width, pic.height, mipmap, alpha);
 }
 
 int GL1Renderer::loadTexture(
@@ -283,7 +275,7 @@ int GL1Renderer::loadTexture(
 
     bindTexture(texture_extension_number);
 
-    GL_Upload8(pic, mipmap, alpha);
+    upload8(pic, mipmap, alpha);
 
     texture_extension_number++;
 
@@ -299,7 +291,7 @@ void GL1Renderer::bindTexture(u32 tex) {
         return;
     }
     current_tex = tex;
-    glBindTexture(GL_TEXTURE_2D, (GLuint) tex);
+    gl.bindTexture(GL_TEXTURE_2D, (GLuint) tex);
 }
 
 GLTexture* GL1Renderer::findTexture(

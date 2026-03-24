@@ -53,12 +53,12 @@ void GL1Renderer::setLogicalSize(u32 width, u32 height) {
         viewport.w = (int) SDL_floor(logical_w * scale);
         viewport.x = (real_w - viewport.w) / 2;
     }
-    glEnable(GL_TEXTURE_2D);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(viewport.x, viewport.y, viewport.w, viewport.h);
-    glOrtho(0, 320, 200, 0, 0, 1);
-    glMatrixMode(GL_MODELVIEW);
+    gl.enable(GL_TEXTURE_2D);
+    gl.matrixMode(GL_PROJECTION);
+    gl.loadIdentity();
+    gl.viewport(viewport.x, viewport.y, viewport.w, viewport.h);
+    gl.ortho(0, 320, 200, 0, 0, 1);
+    gl.matrixMode(GL_MODELVIEW);
 }
 
 void GL1Renderer::drawTransPic(u32 x, u32 y, QPic* pic) {
@@ -71,17 +71,17 @@ void GL1Renderer::drawTransPic(u32 x, u32 y, QPic* pic) {
 }
 
 void GL1Renderer::drawPic(int x, int y, QPic* pic) {
-    GLPic* gl = (GLPic*) pic->data.data();
-    glColor4f(1, 1, 1, 1);
-    bindTexture(gl->texnum);
-    glBegin(GL_QUADS);
-    glTexCoord2f(gl->sl, gl->tl);
-    glVertex2f(x, y);
-    glTexCoord2f(gl->sh, gl->tl);
-    glVertex2f(x + pic->width, y);
-    glTexCoord2f(gl->sh, gl->th);
-    glVertex2f(x + pic->width, y + pic->height);
-    glTexCoord2f(gl->sl, gl->th);
-    glVertex2f(x, y + pic->height);
-    glEnd();
+    const GLPic* gl_pic = (GLPic*) pic->data.data();
+    bindTexture(gl_pic->texnum);
+    gl.begin(GL_QUADS);
+    gl.color4f(1, 1, 1, 1);
+    gl.texCoord2f(gl_pic->sl, gl_pic->tl);
+    gl.vertex2f(x, y);
+    gl.texCoord2f(gl_pic->sh, gl_pic->tl);
+    gl.vertex2f(x + pic->width, y);
+    gl.texCoord2f(gl_pic->sh, gl_pic->th);
+    gl.vertex2f(x + pic->width, y + pic->height);
+    gl.texCoord2f(gl_pic->sl, gl_pic->th);
+    gl.vertex2f(x, y + pic->height);
+    gl.end();
 }

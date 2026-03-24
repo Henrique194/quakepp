@@ -1,6 +1,7 @@
 set(LIB render)
 
 set(GL1_RENDERER
+    src/gl1/context.cpp
     src/gl1/init.cpp
     src/gl1/render.cpp
     src/gl1/texture.cpp
