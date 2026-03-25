@@ -19,18 +19,18 @@
 
 #include "render/gl1.h"
 #include "common/assert.h"
-#include "window/window.h"
+#include "video/video.h"
 #include <glad/glad.h>
 
 void GL1Renderer::present() {
-    SDL_GL_SwapWindow(sdl_window);
+    SDL_GL_SwapWindow(window);
 }
 
 void GL1Renderer::setLogicalSize(u32 width, u32 height) {
     int logical_w = (int) width;
     int logical_h = (int) height;
-    int real_w = (int) window->getWidth();
-    int real_h = (int) window->getHeight();
+    int real_w = (int) video->getWidth();
+    int real_h = (int) video->getHeight();
     float want_aspect = (float) logical_w / logical_h;
     float real_aspect = (float) real_w / real_h;
     SDL_Rect viewport{};
@@ -62,8 +62,8 @@ void GL1Renderer::setLogicalSize(u32 width, u32 height) {
 }
 
 void GL1Renderer::drawTransPic(u32 x, u32 y, QPic* pic) {
-    auto width{window->getWidth()};
-    auto height{window->getHeight()};
+    auto width{video->getWidth()};
+    auto height{video->getHeight()};
     if ((x + pic->width) > width || (y + pic->height) > height) {
         PANIC("bad coordinates");
     }

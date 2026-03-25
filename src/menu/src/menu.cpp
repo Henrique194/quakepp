@@ -24,7 +24,7 @@
 #include "common/types.h"
 #include "filesystem/filesystem.h"
 #include "render/gl1.h"
-#include "window/window.h"
+#include "video/video.h"
 
 std::unique_ptr<Menu> menu;
 
@@ -81,7 +81,7 @@ static QPic* Draw_CachePic(const char* path) {
     pic->pic.height = qpic.height;
 
     GLPic* gl = (GLPic*) pic->pic.data.data();
-    gl->texnum = window->loadPicTexture(qpic);
+    gl->texnum = video->loadPicTexture(qpic);
     gl->sl = 0;
     gl->sh = 1;
     gl->tl = 0;
@@ -91,5 +91,5 @@ static QPic* Draw_CachePic(const char* path) {
 }
 
 void Menu::draw() {
-    window->drawTransPic(16, 4, Draw_CachePic("gfx/qplaque.lmp"));
+    video->drawTransPic(16, 4, Draw_CachePic("gfx/qplaque.lmp"));
 }

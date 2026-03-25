@@ -12,6 +12,6 @@ add_library(${LIB} STATIC ${GL1_RENDERER})
 target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR})
 target_include_directories(${LIB} PUBLIC "./include")
 target_link_libraries(${LIB}
-    PRIVATE common window ${SDL2_LIBRARIES}
+    PRIVATE common video ${SDL2_LIBRARIES}
     PUBLIC filesystem
 )

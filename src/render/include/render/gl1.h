@@ -50,7 +50,7 @@ struct GLTexture {
 
 class GLContext {
   public:
-    explicit GLContext(SDL_Window* sdl_window);
+    explicit GLContext(SDL_Window* window);
     ~GLContext();
 
     void begin(GLenum mode);
@@ -73,8 +73,8 @@ class GLContext {
 
 class GL1Renderer: public Renderer {
   public:
-    static RendererResult create(SDL_Window* sdl_window);
-    GL1Renderer(SDL_Window* sdl_window);
+    static RendererResult create(SDL_Window* window);
+    GL1Renderer(SDL_Window* window);
     ~GL1Renderer() override = default;
 
     void present() override;
@@ -102,7 +102,7 @@ class GL1Renderer: public Renderer {
     void upload8(const QPic& pic, bool mipmap, bool alpha);
     void upload32(const u32* data, int width, int height, bool mipmap, bool alpha);
 
-    SDL_Window* sdl_window{};
+    SDL_Window* window{};
     GLContext gl;
     u32 current_tex{U32_MAX};
     GLTexture gltextures[MAX_GLTEXTURES]{};

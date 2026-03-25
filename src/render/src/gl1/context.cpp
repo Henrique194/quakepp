@@ -60,9 +60,9 @@ static void setGLAttributes() {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 }
 
-GLContext::GLContext(SDL_Window* sdl_window) {
+GLContext::GLContext(SDL_Window* window) {
     setGLAttributes();
-    ctx = SDL_GL_CreateContext(sdl_window);
+    ctx = SDL_GL_CreateContext(window);
     if (!ctx) {
         PANIC("Couldn't create GL context: {}", SDL_GetError());
     }

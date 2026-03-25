@@ -19,11 +19,11 @@
 
 #include "render/gl1.h"
 
-RendererResult GL1Renderer::create(SDL_Window* sdl_window) {
-    return std::make_unique<GL1Renderer>(sdl_window);
+RendererResult GL1Renderer::create(SDL_Window* window) {
+    return std::make_unique<GL1Renderer>(window);
 }
 
-GL1Renderer::GL1Renderer(SDL_Window* sdl_window)
-    : sdl_window{sdl_window}
-    , gl{sdl_window} {
+GL1Renderer::GL1Renderer(SDL_Window* window)
+    : window{window}
+    , gl{window} {
 }

@@ -24,7 +24,7 @@
 #include <memory>
 #include <SDL_video.h>
 
-class Window {
+class Video {
   public:
     static void init();
     static void shutdown();
@@ -37,10 +37,10 @@ class Window {
     int loadPicTexture(QPic& pic);
 
   private:
-    SDL_Window* sdl_window{};
+    SDL_Window* window{};
     std::unique_ptr<Renderer> renderer{};
     u32 width{3456};
     u32 height{2168};
 };
 
-extern std::unique_ptr<Window> window;
+extern std::unique_ptr<Video> video;

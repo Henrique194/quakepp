@@ -1,7 +1,7 @@
-set(LIB window)
+set(LIB video)
 
 add_library(${LIB} STATIC
-    src/window.cpp
+    src/video.cpp
 )
 
 target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR})

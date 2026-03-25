@@ -17,14 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "window/window.h"
+#include "video/video.h"
 #include "common/assert.h"
 #include "render/gl1.h"
 #include "config.h"
 #include <glad/glad.h>
 #include <SDL.h>
 
-std::unique_ptr<Window> window;
+std::unique_ptr<Video> video;
 
 static SDL_Window* createWindow() {
     const char* title{PACKAGE_STRING};
@@ -37,54 +37,54 @@ static SDL_Window* createWindow() {
         | SDL_WINDOW_ALLOW_HIGHDPI
         | SDL_WINDOW_OPENGL
     };
-    SDL_Window* sdl_window{SDL_CreateWindow(title, x, y, w, h, flags)};
-    if (!sdl_window) {
+    SDL_Window* window{SDL_CreateWindow(title, x, y, w, h, flags)};
+    if (!window) {
         PANIC("Couldn't create window: {}", SDL_GetError());
     }
-    SDL_SetWindowMinimumSize(sdl_window, 320, 240);
-    return sdl_window;
+    SDL_SetWindowMinimumSize(window, 320, 240);
+    return window;
 }
 
-void Window::init() {
+void Video::init() {
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
         PANIC("Couldn't initialize video system: {}", SDL_GetError());
     }
-    window = std::make_unique<Window>();
-    window->sdl_window = createWindow();
-    auto renderer{GL1Renderer::create(window->sdl_window)};
+    video = std::make_unique<Video>();
+    video->window = createWindow();
+    auto renderer{GL1Renderer::create(video->window)};
     if (!renderer) {
         PANIC("Couldn't create renderer: {}", renderer.error());
     }
-    window->renderer = std::move(*renderer);
-    window->setLogicalSize(320, 240);
+    video->renderer = std::move(*renderer);
+    video->setLogicalSize(320, 240);
 }
 
-void Window::shutdown() {
-    SDL_DestroyWindow(window->sdl_window);
-    window = nullptr;
+void Video::shutdown() {
+    SDL_DestroyWindow(video->window);
+    video = nullptr;
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-u32 Window::getWidth() {
+u32 Video::getWidth() {
     return width;
 }
 
-u32 Window::getHeight() {
+u32 Video::getHeight() {
     return height;
 }
 
-void Window::update() {
+void Video::update() {
     renderer->present();
 }
 
-void Window::setLogicalSize(u32 width, u32 height) {
+void Video::setLogicalSize(u32 width, u32 height) {
     renderer->setLogicalSize(width, height);
 }
 
-void Window::drawTransPic(u32 x, u32 y, QPic* pic) {
+void Video::drawTransPic(u32 x, u32 y, QPic* pic) {
     renderer->drawTransPic(x, y, pic);
 }
 
-int Window::loadPicTexture(QPic& pic) {
+int Video::loadPicTexture(QPic& pic) {
     return renderer->loadPicTexture(pic);
 }

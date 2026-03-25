@@ -31,7 +31,7 @@ using RendererResult = std::expected<std::unique_ptr<Renderer>, std::string>;
 
 class Renderer {
   public:
-    static RendererResult create(SDL_Window* sdl_window);
+    static RendererResult create(SDL_Window* window);
     virtual ~Renderer() = default;
     virtual void present() = 0;
     virtual void setLogicalSize(u32 width, u32 height) = 0;

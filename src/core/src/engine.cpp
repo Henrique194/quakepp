@@ -25,7 +25,7 @@
 #include "input/input.h"
 #include "menu/menu.h"
 #include "render/render.h"
-#include "window/window.h"
+#include "video/video.h"
 #include "config.h"
 #include <memory>
 #include <SDL.h>
@@ -34,7 +34,7 @@ void Engine::init(int argc, char* argv[]) {
     Cli::init(argc, argv);
     FileSys::init();
     EventSys::init();
-    Window::init();
+    Video::init();
     InputSys::init();
     Menu::init();
 }
@@ -42,7 +42,7 @@ void Engine::init(int argc, char* argv[]) {
 void Engine::shutdown() {
     Menu::shutdown();
     InputSys::shutdown();
-    Window::shutdown();
+    Video::shutdown();
     EventSys::shutdown();
     FileSys::shutdown();
     Cli::shutdown();
@@ -65,7 +65,7 @@ void Engine::runLoop() {
             break;
         }
         menu->draw();
-        window->update();
+        video->update();
         SDL_Delay(16); // 60 FPS
 
     }
