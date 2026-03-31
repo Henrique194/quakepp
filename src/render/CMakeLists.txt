@@ -5,6 +5,7 @@ set(GL1_RENDERER
     src/gl1/init.cpp
     src/gl1/render.cpp
     src/gl1/texture.cpp
+    src/gl1/viewport.cpp
 )
 
 add_library(${LIB} STATIC ${GL1_RENDERER})
