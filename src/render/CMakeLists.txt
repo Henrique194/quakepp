@@ -14,5 +14,5 @@ target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR})
 target_include_directories(${LIB} PUBLIC "./include")
 target_link_libraries(${LIB}
     PRIVATE common video ${SDL2_LIBRARIES}
-    PUBLIC filesystem
+    PUBLIC filesystem glad::glad
 )

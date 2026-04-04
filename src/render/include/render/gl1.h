@@ -20,7 +20,6 @@
 #pragma once
 
 #include "render.h"
-#include <glad/glad.h>
 
 #define MAX_GLTEXTURES 1024
 
@@ -53,19 +52,36 @@ class GLContext {
     explicit GLContext(SDL_Window* window);
     ~GLContext();
 
-    void begin(GLenum mode);
-    void bindTexture(GLenum target, GLuint texture);
-    void color4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-    void enable(GLenum cap);
+    void begin(u32 mode);
+    void bindTexture(u32 target, u32 texture);
+    void color4f(float red, float green, float blue, float alpha);
+    void enable(u32 cap);
     void end();
     void loadIdentity();
-    void matrixMode(GLenum mode);
-    void ortho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
-    void texCoord2f(GLfloat s, GLfloat t);
-    void texImage2D(GLenum target, GLint level, GLint internal_format, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void* pixels);
-    void texParameterf(GLenum target, GLenum pname, GLfloat param);
-    void vertex2f(GLfloat x, GLfloat y);
-    void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
+    void matrixMode(u32 mode);
+    void ortho(
+        double left,
+        double right,
+        double bottom,
+        double top,
+        double zNear,
+        double zFar
+    );
+    void texCoord2f(float s, float t);
+    void texImage2D(
+        u32 target,
+        i32 level,
+        i32 internal_format,
+        i32 width,
+        i32 height,
+        i32 border,
+        u32 format,
+        u32 type,
+        const void* pixels
+    );
+    void texParameterf(u32 target, u32 pname, float param);
+    void vertex2f(float x, float y);
+    void viewport(i32 x, i32 y, i32 width, i32 height);
 
   private:
     SDL_GLContext ctx{};
@@ -112,7 +128,7 @@ class GL1Renderer: public Renderer {
     float gl_max_size{1024};
     int gl_solid_format{3};
     int gl_alpha_format{4};
-    int gl_filter_min{GL_NEAREST};
-    int gl_filter_max{GL_NEAREST};
+    int gl_filter_min;
+    int gl_filter_max;
     int texture_extension_number{1};
 };

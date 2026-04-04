@@ -18,6 +18,7 @@
  */
 
 #include "render/gl1.h"
+#include <glad/glad.h>
 
 RendererResult GL1Renderer::create(SDL_Window* window) {
     return std::make_unique<GL1Renderer>(window);
@@ -25,5 +26,7 @@ RendererResult GL1Renderer::create(SDL_Window* window) {
 
 GL1Renderer::GL1Renderer(SDL_Window* window)
     : window{window}
-    , gl{window} {
+    , gl{window}
+    , gl_filter_min{GL_NEAREST}
+    , gl_filter_max{GL_NEAREST}{
 }

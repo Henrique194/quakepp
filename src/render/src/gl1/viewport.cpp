@@ -19,6 +19,7 @@
 
 #include "render/gl1.h"
 #include "video/video.h"
+#include <glad/glad.h>
 
 void GL1Renderer::setLogicalSize(u32 width, u32 height) {
     int logical_w = (int) width;
