@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "render.h"
+#include "renderer.h"
 
 #define MAX_GLTEXTURES 1024
 

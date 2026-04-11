@@ -23,7 +23,7 @@
 #include "common/try.h"
 #include "common/types.h"
 #include "filesystem/filesystem.h"
-#include "render/gl1.h"
+#include "renderer/gl1.h"
 #include "video/video.h"
 
 std::unique_ptr<Menu> menu;

@@ -20,7 +20,7 @@
 #pragma once
 
 #include "common/types.h"
-#include "render/render.h"
+#include "renderer/renderer.h"
 #include <memory>
 #include <SDL_video.h>
 

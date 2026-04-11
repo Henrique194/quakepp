@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "render/gl1.h"
+#include "renderer/gl1.h"
 #include "common/assert.h"
 #include <glad/glad.h>
 

@@ -19,7 +19,7 @@
 
 #include "video/video.h"
 #include "common/assert.h"
-#include "render/gl1.h"
+#include "renderer/gl1.h"
 #include "config.h"
 #include <SDL.h>
 

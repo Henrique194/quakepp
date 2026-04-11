@@ -1,4 +1,4 @@
-set(LIB render)
+set(LIB renderer)
 
 set(GL1_RENDERER
     src/gl1/context.cpp
