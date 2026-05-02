@@ -17,36 +17,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#pragma once
+#include "video/video.h"
 
-#include "common/io.h"
-#include "search_dir.h"
-#include <memory>
-#include <string>
-#include <string_view>
-#include <vector>
+void Video::frame() {
+    renderer->present();
+}
 
-//
-// Quake picture format (.lmp).
-//
-struct QPic {
-    i32 width;
-    i32 height;
-    std::vector<byte> data;
-};
+void Video::drawPic(const char* name, i32 x, i32 y) {
+    renderer->drawPic(name, x, y);
+}
 
-class FileSys {
-  public:
-    static void init();
-    static void shutdown();
-    ResultIO<File> openFile(std::string_view name);
-    ResultIO<QPic> loadPicture(std::string_view name);
-
-  private:
-    void addGameDir(std::string_view dir);
-
-    std::string game_dir{};
-    std::vector<SearchDir> search_dirs{};
-};
-
-extern std::unique_ptr<FileSys> file_sys;
+void Video::getPicSize(const char* name, i32& w, i32& h) {
+    renderer->getPicSize(name, w, h);
+}

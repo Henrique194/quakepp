@@ -28,7 +28,9 @@ class Engine {
   private:
     static void init(int argc, char* argv[]);
     static void shutdown();
+    static void showErrorWindow(const std::exception& e);
+
     static void runLoop();
-    static bool runFrame();
-    static void handleError(const std::exception& e);
+    static void runFrame();
+    static bool handleEvents();
 };

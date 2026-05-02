@@ -19,28 +19,36 @@
 
 #pragma once
 
+#include "common/ptr.h"
 #include "common/types.h"
 #include "renderer/renderer.h"
-#include <memory>
 #include <SDL_video.h>
 
 class Video {
   public:
     static void init();
     static void shutdown();
-    void update();
-    u32 getWidth();
-    u32 getHeight();
 
-    void setLogicalSize(u32 width, u32 height);
-    void drawTransPic(u32 x, u32 y, QPic* pic);
-    int loadPicTexture(QPic& pic);
+    Video();
+    ~Video();
+
+    void frame();
+
+    i32 getWidth() const;
+    i32 getHeight() const;
+    void setMode(i32 mode);
+
+    void drawPic(const char* name, i32 x, i32 y);
+    void getPicSize(const char* name, i32& w, i32& h);
 
   private:
-    SDL_Window* window{};
-    std::unique_ptr<Renderer> renderer{};
-    u32 width{3456};
-    u32 height{2168};
+    void enableAspectCorrection();
+    void disableAspectCorrection();
+
+    SDL_Window* window;
+    Box<Renderer> renderer;
+    i32 width;
+    i32 height;
 };
 
-extern std::unique_ptr<Video> video;
+extern Box<Video> video;

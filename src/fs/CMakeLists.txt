@@ -1,11 +1,12 @@
-set(LIB filesystem)
+set(LIB fs)
 
 add_library(${LIB} STATIC
-    src/filesystem.cpp
+    src/dir.cpp
+    src/init.cpp
+    src/load.cpp
     src/pak.cpp
-    src/search_dir.cpp
 )
 
 target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR})
 target_include_directories(${LIB} PUBLIC "./include")
-target_link_libraries(${LIB} PRIVATE common)
+target_link_libraries(${LIB} PUBLIC common)

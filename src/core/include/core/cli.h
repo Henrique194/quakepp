@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <memory>
+#include "common/ptr.h"
 #include <string_view>
 #include <vector>
 #include <unordered_map>
@@ -36,4 +36,4 @@ class Cli {
     std::unordered_map<std::string_view, int> idx_map;
 };
 
-extern std::unique_ptr<Cli> cli;
+extern Box<Cli> cli;

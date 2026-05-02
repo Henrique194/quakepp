@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "assert.h"
-#include "types.h"
+#include "common/assert.h"
+#include "common/types.h"
 #include <expected>
 #include <string_view>
 #include <SDL_rwops.h>

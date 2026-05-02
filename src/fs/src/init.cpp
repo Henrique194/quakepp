@@ -17,16 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "input/input.h"
+#include "fs/fs.h"
 
-Box<InputSys> input_sys;
+//
+// Game directory to look in by default.
+//
+static constexpr auto DEFAULT_DIR = "./id1";
 
-void InputSys::init() {
-    input_sys = make_box<InputSys>();
-    // Start with mouse grabbed.
-    input_sys->grabMouse();
+Box<FileSys> file_sys;
+
+void FileSys::init() {
+    file_sys = make_box<FileSys>();
+    file_sys->addGameDir(DEFAULT_DIR);
 }
 
-void InputSys::shutdown() {
-    input_sys = nullptr;
+void FileSys::shutdown() {
+    file_sys = nullptr;
 }

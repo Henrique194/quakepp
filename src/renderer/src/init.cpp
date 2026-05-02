@@ -17,16 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "input/input.h"
+#include "renderer/renderer.h"
+#include "gl1/gl1.h"
 
-Box<InputSys> input_sys;
-
-void InputSys::init() {
-    input_sys = make_box<InputSys>();
-    // Start with mouse grabbed.
-    input_sys->grabMouse();
-}
-
-void InputSys::shutdown() {
-    input_sys = nullptr;
+RendererResult Renderer::create(RenderType type, SDL_Window* window) {
+    switch (type) {
+        case RenderType::GL1:
+            return GL1Renderer::create(window);
+        default:
+            return std::unexpected{"Unknown render type"};
+    }
 }

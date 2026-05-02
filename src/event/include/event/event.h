@@ -17,16 +17,35 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "input/input.h"
+#pragma once
 
-Box<InputSys> input_sys;
+#include "types.h"
+#include "common/ptr.h"
+#include <array>
+#include <SDL_events.h>
 
-void InputSys::init() {
-    input_sys = make_box<InputSys>();
-    // Start with mouse grabbed.
-    input_sys->grabMouse();
-}
+class EventSys {
+  public:
+    static void init();
+    static void shutdown();
 
-void InputSys::shutdown() {
-    input_sys = nullptr;
-}
+    Event getEvent();
+
+  private:
+    void queueEvent(Event event);
+    Event popEvent();
+
+    void pollSysEvents();
+    void queueSysEvent(SDL_Event& ev);
+    void queueKeyboardEvent(SDL_KeyboardEvent& ev);
+    void queueMouseButtonEvent(SDL_MouseButtonEvent& ev);
+    void queueMouseMotionEvent(SDL_MouseMotionEvent& ev);
+    void queueMouseWheelEvent(SDL_MouseWheelEvent& ev);
+
+    static constexpr u32 MAX_EVENTS = 256;
+    u32 head{0};
+    u32 tail{0};
+    std::array<Event, MAX_EVENTS> events{};
+};
+
+extern Box<EventSys> event_sys;

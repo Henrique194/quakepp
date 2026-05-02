@@ -17,16 +17,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "input/input.h"
+#pragma once
 
-Box<InputSys> input_sys;
+#include <memory>
 
-void InputSys::init() {
-    input_sys = make_box<InputSys>();
-    // Start with mouse grabbed.
-    input_sys->grabMouse();
+template<typename T>
+using Box = std::unique_ptr<T>;
+
+template<typename T, typename... Args>
+constexpr Box<T> make_box(Args&&... args) {
+    return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
-void InputSys::shutdown() {
-    input_sys = nullptr;
+template<typename T>
+using Rc = std::shared_ptr<T>;
+
+template<typename T, typename... Args>
+constexpr Rc<T> make_rc(Args&&... args) {
+    return std::make_shared<T>(std::forward<Args>(args)...);
 }
+
+template<typename T>
+using Weak = std::weak_ptr<T>;

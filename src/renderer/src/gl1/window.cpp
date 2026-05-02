@@ -17,41 +17,52 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "renderer/gl1.h"
+#include "gl1.h"
 #include "video/video.h"
-#include <glad/glad.h>
+#include <SDL_stdinc.h>
 
-void GL1Renderer::setLogicalSize(u32 width, u32 height) {
-    int logical_w = (int) width;
-    int logical_h = (int) height;
-    int real_w = (int) video->getWidth();
-    int real_h = (int) video->getHeight();
-    float want_aspect = (float) logical_w / logical_h;
-    float real_aspect = (float) real_w / real_h;
-    SDL_Rect viewport{};
+struct Viewport {
+    i32 x;
+    i32 y;
+    i32 w;
+    i32 h;
+};
+
+static Viewport getViewport(i32 width, i32 height) {
+    float logical_w{(float) width};
+    float logical_h{(float) height};
+    i32 real_w{video->getWidth()};
+    i32 real_h{video->getHeight()};
+    float want_aspect{logical_w / logical_h};
+    float real_aspect{(float) real_w / real_h};
     if (SDL_fabs(want_aspect - real_aspect) < 0.0001) {
         // Aspect ratios are the same.
-        viewport.w = real_w;
-        viewport.h = real_h;
-    } else if (want_aspect > real_aspect) {
-        // Wider aspect ratio, so letterbox it.
-        float scale = (float) real_w / logical_w;
-        viewport.x = 0;
-        viewport.w = real_w;
-        viewport.h = (int) SDL_floor(logical_h * scale);
-        viewport.y = (real_h - viewport.h) / 2;
-    } else {
-        // Narrower aspect ratio, so use side-bars.
-        float scale = (float) real_h / logical_h;
-        viewport.y = 0;
-        viewport.h = real_h;
-        viewport.w = (int) SDL_floor(logical_w * scale);
-        viewport.x = (real_w - viewport.w) / 2;
+        return Viewport{.x = 0, .y = 0, .w = real_w, .h = real_h};
     }
+    if (want_aspect > real_aspect) {
+        // Wider aspect ratio, so letterbox it.
+        float scale{(float) real_w / logical_w};
+        i32 h{(i32) SDL_floor(logical_h * scale)};
+        i32 y{(real_h - h) / 2};
+        return Viewport{.x = 0, .y = y, .w = real_w, .h = h};
+    }
+    // Narrower aspect ratio, so use side-bars.
+    float scale = (float) real_h / logical_h;
+    i32 w{(i32) SDL_floor(logical_w * scale)};
+    i32 x{(real_w - w) / 2};
+    return Viewport{.x = x, .y = 0, .w = w, .h = real_h};
+}
+
+void GL1Renderer::setLogicalSize(i32 w, i32 h) {
+    Viewport viewport{getViewport(w, h)};
     gl.enable(GL_TEXTURE_2D);
     gl.matrixMode(GL_PROJECTION);
     gl.loadIdentity();
     gl.viewport(viewport.x, viewport.y, viewport.w, viewport.h);
     gl.ortho(0, 320, 200, 0, 0, 1);
     gl.matrixMode(GL_MODELVIEW);
+}
+
+void GL1Renderer::present() {
+    SDL_GL_SwapWindow(window);
 }

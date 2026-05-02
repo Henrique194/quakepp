@@ -17,16 +17,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "renderer/gl1.h"
-#include <glad/glad.h>
+#include "gl1.h"
 
 RendererResult GL1Renderer::create(SDL_Window* window) {
-    return std::make_unique<GL1Renderer>(window);
+    auto ctx{GLContext::create(window)};
+    if (!ctx) {
+        return std::unexpected{ctx.error()};
+    }
+    return make_box<GL1Renderer>(window, std::move(*ctx));
 }
 
-GL1Renderer::GL1Renderer(SDL_Window* window)
+GL1Renderer::GL1Renderer(SDL_Window* window, GLContext&& ctx)
     : window{window}
-    , gl{window}
-    , gl_filter_min{GL_NEAREST}
-    , gl_filter_max{GL_NEAREST}{
+    , gl{std::move(ctx)}
+{
+    setGL2D();
+}
+
+void GL1Renderer::setGL2D() {
+    gl.enable(GL_ALPHA_TEST);
+    gl.alphaFunc(GL_GREATER, 0.666f);
+    gl.color4f(1, 1, 1, 1);
 }

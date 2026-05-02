@@ -19,26 +19,50 @@
 
 #pragma once
 
-#include <memory>
+#include "common/types.h"
 
 enum class EventType {
     None,
     Quit,
+    Key,
+    Mouse,
 };
 
-struct Event {
+struct QuitEvent {
+    EventType type{EventType::Quit};
+    u32 time;
+
+    QuitEvent(u32 time) : time{time} {}
+};
+
+struct KeyEvent {
+    EventType type{EventType::Key};
+    u32 time;
+    u8 key;
+    bool down;
+
+    KeyEvent(u32 time, u8 key, bool down)
+        : time{time}, key{key}, down{down} {}
+};
+
+struct MouseEvent {
+    EventType type{EventType::Mouse};
+    u32 time;
+    i32 dx;
+    i32 dy;
+
+    MouseEvent(u32 time, i32 dx, i32 dy)
+        : time{time}, dx{dx}, dy{dy} {}
+};
+
+union Event {
     EventType type;
+    QuitEvent quit;
+    KeyEvent key;
+    MouseEvent mouse;
 
-    explicit operator bool() const {
-        return type != EventType::None;
-    }
+    Event(): type{EventType::None} {}
+    Event(QuitEvent ev): quit{ev} {}
+    Event(KeyEvent ev): key{ev} {}
+    Event(MouseEvent ev): mouse{ev} {}
 };
-
-class EventSys {
-  public:
-    static void init();
-    static void shutdown();
-    Event pollEvent();
-};
-
-extern std::unique_ptr<EventSys> event_sys;

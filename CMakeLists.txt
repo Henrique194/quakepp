@@ -25,7 +25,7 @@ add_compile_definitions($<$<CONFIG:Debug>:PARANOID>)
 configure_file(cmake/config.h.in config.h)
 
 # Add internal libs first.
-set(LIBS common core filesystem input menu renderer video)
+set(LIBS common core event fs input menu renderer video)
 foreach(LIB ${LIBS})
     add_subdirectory(src/${LIB})
 endforeach()

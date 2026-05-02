@@ -17,16 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "input/input.h"
+#include "menu/menu.h"
 
-Box<InputSys> input_sys;
+Box<Menu> menu;
 
-void InputSys::init() {
-    input_sys = make_box<InputSys>();
-    // Start with mouse grabbed.
-    input_sys->grabMouse();
+void Menu::init() {
+    menu = make_box<Menu>();
 }
 
-void InputSys::shutdown() {
-    input_sys = nullptr;
+void Menu::shutdown() {
+    menu = nullptr;
 }

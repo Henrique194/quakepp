@@ -19,11 +19,23 @@
 
 #include "video/video.h"
 #include "common/assert.h"
-#include "renderer/gl1.h"
 #include "config.h"
 #include <SDL.h>
 
-std::unique_ptr<Video> video;
+Box<Video> video;
+
+void Video::init() {
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
+        PANIC("Couldn't initialize video system: {}", SDL_GetError());
+    }
+    video = make_box<Video>();
+    video->setMode(0);
+}
+
+void Video::shutdown() {
+    video = nullptr;
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+}
 
 static SDL_Window* createWindow() {
     const char* title{PACKAGE_STRING};
@@ -44,46 +56,25 @@ static SDL_Window* createWindow() {
     return window;
 }
 
-void Video::init() {
-    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
-        PANIC("Couldn't initialize video system: {}", SDL_GetError());
+static Box<Renderer> createRenderer(SDL_Window* window) {
+    auto type{RenderType::GL1};
+    auto result{Renderer::create(type, window)};
+    if (!result) {
+        PANIC("Couldn't create renderer: {}", result.error());
     }
-    video = std::make_unique<Video>();
-    video->window = createWindow();
-    auto renderer{GL1Renderer::create(video->window)};
-    if (!renderer) {
-        PANIC("Couldn't create renderer: {}", renderer.error());
-    }
-    video->renderer = std::move(*renderer);
-    video->setLogicalSize(320, 240);
+    return std::move(*result);
 }
 
-void Video::shutdown() {
-    SDL_DestroyWindow(video->window);
-    video = nullptr;
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+Video::Video()
+    : window{createWindow()}
+    , renderer{createRenderer(window)}
+    , width{0}
+    , height{0} {
 }
 
-u32 Video::getWidth() {
-    return width;
-}
-
-u32 Video::getHeight() {
-    return height;
-}
-
-void Video::update() {
-    renderer->present();
-}
-
-void Video::setLogicalSize(u32 width, u32 height) {
-    renderer->setLogicalSize(width, height);
-}
-
-void Video::drawTransPic(u32 x, u32 y, QPic* pic) {
-    renderer->drawTransPic(x, y, pic);
-}
-
-int Video::loadPicTexture(QPic& pic) {
-    return renderer->loadPicTexture(pic);
+Video::~Video() {
+    // We need to shut down renderer first,
+    // because it depends on the SDL window.
+    renderer = nullptr;
+    SDL_DestroyWindow(window);
 }

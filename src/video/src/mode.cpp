@@ -17,16 +17,33 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "input/input.h"
+#include "video/video.h"
+#include <SDL_video.h>
 
-Box<InputSys> input_sys;
+static constexpr i32 LOGICAL_WIDTH = 320;
+static constexpr i32 LOGICAL_HEIGHT = 240;
 
-void InputSys::init() {
-    input_sys = make_box<InputSys>();
-    // Start with mouse grabbed.
-    input_sys->grabMouse();
+i32 Video::getWidth() const {
+    return width;
 }
 
-void InputSys::shutdown() {
-    input_sys = nullptr;
+i32 Video::getHeight() const {
+    return height;
+}
+
+void Video::setMode(i32 mode) {
+    int w;
+    int h;
+    SDL_GetWindowSizeInPixels(window, &w, &h);
+    width = (i32) w;
+    height = (i32) h;
+    enableAspectCorrection();
+}
+
+void Video::enableAspectCorrection() {
+    renderer->setLogicalSize(LOGICAL_WIDTH, LOGICAL_HEIGHT);
+}
+
+void Video::disableAspectCorrection() {
+    renderer->setLogicalSize(0, 0);
 }

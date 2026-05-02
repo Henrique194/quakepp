@@ -17,33 +17,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "core/event.h"
+#include "event/event.h"
 #include "common/assert.h"
 #include <SDL.h>
 
-std::unique_ptr<EventSys> event_sys;
+Box<EventSys> event_sys;
 
 void EventSys::init() {
     if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0) {
         PANIC("Couldn't initialize event system: {}", SDL_GetError());
     }
-    event_sys = std::make_unique<EventSys>();
+    event_sys = make_box<EventSys>();
 }
 
 void EventSys::shutdown() {
     event_sys = nullptr;
     SDL_QuitSubSystem(SDL_INIT_EVENTS);
-}
-
-Event EventSys::pollEvent() {
-    SDL_Event event;
-    if (!SDL_PollEvent(&event)) {
-        return Event{EventType::None};
-    }
-    switch (event.type) {
-        case SDL_QUIT:
-            return Event{EventType::Quit};
-        default:
-            return Event{EventType::None};
-    }
 }

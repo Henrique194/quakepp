@@ -19,10 +19,10 @@
 
 #include "core/cli.h"
 
-std::unique_ptr<Cli> cli;
+Box<Cli> cli;
 
 void Cli::init(int argc, char* argv[]) {
-    cli = std::make_unique<Cli>(argc, argv);
+    cli = make_box<Cli>(argc, argv);
 }
 
 void Cli::shutdown() {

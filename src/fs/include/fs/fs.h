@@ -17,16 +17,37 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "input/input.h"
+#pragma once
 
-Box<InputSys> input_sys;
+#include "dir.h"
+#include "common/io.h"
+#include "common/ptr.h"
+#include <string>
+#include <string_view>
+#include <vector>
 
-void InputSys::init() {
-    input_sys = make_box<InputSys>();
-    // Start with mouse grabbed.
-    input_sys->grabMouse();
-}
+//
+// Quake picture format (.lmp).
+//
+struct QPic {
+    i32 width{0};
+    i32 height{0};
+    std::vector<byte> pixels{};
+};
 
-void InputSys::shutdown() {
-    input_sys = nullptr;
-}
+class FileSys {
+  public:
+    static void init();
+    static void shutdown();
+
+    ResultIO<File> openFile(std::string_view name);
+    ResultIO<QPic> loadPicture(std::string_view name);
+
+  private:
+    void addGameDir(std::string_view dir);
+
+    std::string game_dir{};
+    std::vector<SearchDir> search_dirs{};
+};
+
+extern Box<FileSys> file_sys;

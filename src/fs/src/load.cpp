@@ -17,16 +17,31 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "input/input.h"
+#include "fs/fs.h"
+#include "common/assert.h"
+#include "common/byte_swap.h"
+#include "common/try.h"
 
-Box<InputSys> input_sys;
+ResultIO<QPic> FileSys::loadPicture(std::string_view name) {
+    TRY(file, openFile(name));
+    TRY(len, file.size());
 
-void InputSys::init() {
-    input_sys = make_box<InputSys>();
-    // Start with mouse grabbed.
-    input_sys->grabMouse();
-}
+    QPic pic{};
+    auto num_pixels{len - 8};
+    pic.pixels.resize(num_pixels);
 
-void InputSys::shutdown() {
-    input_sys = nullptr;
+    TRY(file.read(&pic.width, 4));
+    TRY(file.read(&pic.height, 4));
+    TRY(file.read(pic.pixels.data(), num_pixels));
+    pic.width = Q_Swap32LE(pic.width);
+    pic.height = Q_Swap32LE(pic.height);
+
+#ifdef PARANOID
+    // Check if the given dimension matches actual size.
+    if (pic.width * pic.height != num_pixels) {
+        PANIC("Lump picture has wrong dimension.");
+    }
+#endif
+
+    return pic;
 }

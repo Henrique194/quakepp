@@ -17,9 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "renderer/gl1.h"
+#include "gl_ctx.h"
 #include "common/assert.h"
-#include <glad/glad.h>
 
 #ifdef PARANOID
 #define CHECK_ERROR()                                                          \
@@ -52,9 +51,7 @@ static const char* getErrorMsg(u32 error_code) {
 static void setGLAttributes() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(
-        SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY
-    );
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -62,19 +59,36 @@ static void setGLAttributes() {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 }
 
-GLContext::GLContext(SDL_Window* window) {
+std::expected<GLContext, const char*> GLContext::create(SDL_Window* window) {
     setGLAttributes();
-    ctx = SDL_GL_CreateContext(window);
-    if (!ctx) {
-        PANIC("Couldn't create GL context: {}", SDL_GetError());
+    SDL_GLContext sdl_ctx{SDL_GL_CreateContext(window)};
+    if (!sdl_ctx) {
+        return std::unexpected{SDL_GetError()};
     }
     if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) {
-        PANIC("Couldn't load GL functions");
+        return std::unexpected{"Couldn't load GL functions"};
     }
+    return GLContext{sdl_ctx};
+}
+
+GLContext::GLContext(SDL_GLContext ctx)
+    : ctx{ctx} {
+}
+
+GLContext::GLContext(GLContext&& other)
+    : ctx{other.ctx} {
+    other.ctx = nullptr;
 }
 
 GLContext::~GLContext() {
-    SDL_GL_DeleteContext(ctx);
+    if (ctx) {
+        SDL_GL_DeleteContext(ctx);
+    }
+}
+
+void GLContext::alphaFunc(u32 func, float ref) {
+    glAlphaFunc(func, ref);
+    CHECK_ERROR();
 }
 
 void GLContext::begin(u32 mode) {
@@ -100,6 +114,11 @@ void GLContext::end() {
     CHECK_ERROR();
 }
 
+void GLContext::genTextures(i32 n, u32* textures) {
+    glGenTextures(n, textures);
+    CHECK_ERROR();
+}
+
 void GLContext::loadIdentity() {
     glLoadIdentity();
     CHECK_ERROR();
@@ -111,12 +130,9 @@ void GLContext::matrixMode(u32 mode) {
 }
 
 void GLContext::ortho(
-    double left,
-    double right,
-    double bottom,
-    double top,
-    double zNear,
-    double zFar
+    double left, double right,
+    double bottom, double top,
+    double zNear, double zFar
 ) {
     glOrtho(left, right, bottom, top, zNear, zFar);
     CHECK_ERROR();

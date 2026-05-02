@@ -20,21 +20,29 @@
 #pragma once
 
 #include "common/types.h"
-#include "filesystem/filesystem.h"
+#include "common/ptr.h"
 #include <SDL_video.h>
 #include <expected>
-#include <memory>
 #include <string>
 
+enum class RenderType {
+    Soft,
+    GL1,
+    GL3,
+};
+
 class Renderer;
-using RendererResult = std::expected<std::unique_ptr<Renderer>, std::string>;
+
+using RendererResult = std::expected<Box<Renderer>, std::string>;
 
 class Renderer {
   public:
-    static RendererResult create(SDL_Window* window);
+    static RendererResult create(RenderType type, SDL_Window* window);
     virtual ~Renderer() = default;
+
     virtual void present() = 0;
-    virtual void setLogicalSize(u32 width, u32 height) = 0;
-    virtual void drawTransPic(u32 x, u32 y, QPic* pic) = 0;
-    virtual int loadPicTexture(QPic& pic) = 0;
+    virtual void setLogicalSize(i32 w, i32 h) = 0;
+
+    virtual void drawPic(const char* name, i32 x, i32 y) = 0;
+    virtual void getPicSize(const char* name, i32& w, i32& h) = 0;
 };

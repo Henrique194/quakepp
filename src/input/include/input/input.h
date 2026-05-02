@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <memory>
+#include "common/ptr.h"
 
 class InputSys {
   public:
@@ -29,4 +29,4 @@ class InputSys {
     void releaseMouse();
 };
 
-extern std::unique_ptr<InputSys> input_sys;
+extern Box<InputSys> input_sys;

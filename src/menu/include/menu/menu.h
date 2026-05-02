@@ -19,13 +19,21 @@
 
 #pragma once
 
-#include <memory>
+#include "common/ptr.h"
+#include "common/types.h"
 
 class Menu {
   public:
     static void init();
     static void shutdown();
-    void draw();
+    void frame();
+
+  private:
+    void calcScale();
+    static void draw();
+    static void drawPic(const char* name, i32 x, i32 y);
+
+    float scale{1};
 };
 
-extern std::unique_ptr<Menu> menu;
+extern Box<Menu> menu;

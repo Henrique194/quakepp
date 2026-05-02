@@ -18,15 +18,18 @@
  */
 
 #include "input/input.h"
+#include <SDL.h>
 
-Box<InputSys> input_sys;
-
-void InputSys::init() {
-    input_sys = make_box<InputSys>();
-    // Start with mouse grabbed.
-    input_sys->grabMouse();
+void InputSys::grabMouse() {
+    // Relative mode for continuous mouse motion.
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    // Do not show cursor.
+    SDL_ShowCursor(SDL_FALSE);
+    // Zero mouse accumulation, so the camera doesn't go flying.
+    SDL_GetRelativeMouseState(nullptr, nullptr);
 }
 
-void InputSys::shutdown() {
-    input_sys = nullptr;
+void InputSys::releaseMouse() {
+    SDL_SetRelativeMouseMode(SDL_FALSE);
+    SDL_ShowCursor(SDL_TRUE);
 }

@@ -17,26 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "filesystem/filesystem.h"
-#include "common/byte_swap.h"
-#include "common/try.h"
+#include "fs/fs.h"
+#include <format>
 #include <ranges>
-
-//
-// Game directory to look in by default.
-//
-static constexpr const char* default_dir = "./id1";
-
-std::unique_ptr<FileSys> file_sys;
-
-void FileSys::init() {
-    file_sys = std::make_unique<FileSys>();
-    file_sys->addGameDir(default_dir);
-}
-
-void FileSys::shutdown() {
-    file_sys = nullptr;
-}
 
 void FileSys::addGameDir(std::string_view dir) {
     game_dir = dir;
@@ -54,14 +37,30 @@ ResultIO<File> FileSys::openFile(std::string_view name) {
     return std::unexpected{"Couldn't open file"};
 }
 
-ResultIO<QPic> FileSys::loadPicture(std::string_view name) {
-    TRY(file, openFile(name));
-    TRY(len, file.size());
-    i32 width{0};
-    i32 height{0};
-    std::vector<byte> data(len - 8);
-    TRY(file.read(&width, 4));
-    TRY(file.read(&height, 4));
-    TRY(file.read(data.data(), data.size()));
-    return QPic{Q_Swap32LE(width), Q_Swap32LE(height), data};
+ResultIO<File> SearchDir::openFile(std::string_view name) {
+    // Search in PAK files first.
+    // Also use reverse order so PAK files with
+    // higher number have higher priority.
+    for (auto& pak : paks | std::views::reverse) {
+        if (auto file{pak.openFile(name)}) {
+            return file;
+        }
+    }
+    // Try searching it in the OS directory.
+    std::string file_path{std::format("{}/{}", path, name)};
+    return File::open(file_path, "rb");
+}
+
+SearchDir::SearchDir(std::string_view path)
+    : path{path}
+{
+    // Find all PAK files in the given path.
+    for (u32 i = 0;; i++) {
+        std::string pak_path{std::format("{}/pak{}.pak", path, i)};
+        auto pak{PakFile::open(std::move(pak_path))};
+        if (!pak) {
+            break;
+        }
+        paks.push_back(std::move(*pak));
+    }
 }

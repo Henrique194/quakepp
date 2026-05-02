@@ -19,15 +19,23 @@
 
 #include "core/engine.h"
 #include "core/cli.h"
-#include "core/event.h"
-#include "common/types.h"
-#include "filesystem/filesystem.h"
+#include "event/event.h"
+#include "fs/fs.h"
 #include "input/input.h"
 #include "menu/menu.h"
 #include "video/video.h"
 #include "config.h"
-#include <memory>
 #include <SDL.h>
+
+void Engine::run(int argc, char* argv[]) {
+    try {
+        init(argc, argv);
+        runLoop();
+    } catch (std::exception& e) {
+        showErrorWindow(e);
+    }
+    shutdown();
+}
 
 void Engine::init(int argc, char* argv[]) {
     Cli::init(argc, argv);
@@ -48,38 +56,7 @@ void Engine::shutdown() {
     SDL_Quit();
 }
 
-void Engine::run(int argc, char* argv[]) {
-    try {
-        init(argc, argv);
-        runLoop();
-    } catch (std::exception& e) {
-        handleError(e);
-    }
-    shutdown();
-}
-
-void Engine::runLoop() {
-    while (true) {
-        if (!runFrame()) {
-            break;
-        }
-        menu->draw();
-        video->update();
-        SDL_Delay(16); // 60 FPS
-
-    }
-}
-
-bool Engine::runFrame() {
-    while (auto ev{event_sys->pollEvent()}) {
-        if (ev.type == EventType::Quit) {
-            return false;
-        }
-    }
-    return true;
-}
-
-void Engine::handleError(const std::exception& e) {
+void Engine::showErrorWindow(const std::exception& e) {
     u32 flags{SDL_MESSAGEBOX_ERROR};
     const char* title{PACKAGE_STRING};
     const char* msg{e.what()};

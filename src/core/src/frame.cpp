@@ -17,33 +17,34 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "filesystem/search_dir.h"
-#include <format>
-#include <ranges>
+#include "core/engine.h"
+#include "event/event.h"
+#include "menu/menu.h"
+#include "video/video.h"
+#include <SDL.h>
 
-SearchDir::SearchDir(std::string_view path)
-    : path{path}
-{
-    for (u32 i = 0;; i++) {
-        std::string pak_path{std::format("{}/pak{}.pak", path, i)};
-        auto pak{PakFile::open(std::move(pak_path))};
-        if (!pak) {
-            break;
-        }
-        paks.push_back(std::move(*pak));
+void Engine::runLoop() {
+    while (handleEvents()) {
+        runFrame();
+        SDL_Delay(16); // 60 FPS
     }
 }
 
-ResultIO<File> SearchDir::openFile(std::string_view name) {
-    // Search in PAK files first.
-    // Also use reverse order so PAK files with
-    // higher number have higher priority.
-    for (auto& pak : paks | std::views::reverse) {
-        if (auto file{pak.openFile(name)}) {
-            return file;
+void Engine::runFrame() {
+    menu->frame();
+    video->frame();
+}
+
+bool Engine::handleEvents() {
+    while (true) {
+        auto ev{event_sys->getEvent()};
+        switch (ev.type) {
+            case EventType::None:
+                return true;
+            case EventType::Quit:
+                return false;
+            default:
+                break;
         }
     }
-    // Try searching it in the OS directory.
-    std::string file_path{std::format("{}/{}", path, name)};
-    return File::open(file_path, "rb");
 }
