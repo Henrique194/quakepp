@@ -78,7 +78,8 @@ GLContext::GLContext(SDL_GLContext ctx)
 }
 
 GLContext::GLContext(GLContext&& other)
-    : ctx{other.ctx} {
+    : ctx{other.ctx}
+    , npot_supported{other.npot_supported} {
     other.ctx = nullptr;
 }
 

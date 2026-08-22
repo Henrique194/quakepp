@@ -47,6 +47,13 @@ struct Image {
     float th;
 };
 
+struct Viewport {
+    i32 x;
+    i32 y;
+    i32 w;
+    i32 h;
+};
+
 class GL1Renderer: public Renderer {
   public:
     static RendererResult create(SDL_Window* window);
@@ -95,4 +102,8 @@ class GL1Renderer: public Renderer {
     i32 solid_format{GL_RGB};
     i32 filter_min{GL_NEAREST};
     i32 filter_max{GL_NEAREST};
+
+  private:
+    Viewport getViewport(i32 width, i32 height) const;
+    void getWindowSize(i32& w, i32& h) const;
 };

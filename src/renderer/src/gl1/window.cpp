@@ -21,16 +21,25 @@
 #include "video/video.h"
 #include <SDL_stdinc.h>
 
-struct Viewport {
-    i32 x;
-    i32 y;
-    i32 w;
-    i32 h;
-};
+void GL1Renderer::present() {
+    SDL_GL_SwapWindow(window);
+}
 
-static Viewport getViewport(i32 width, i32 height) {
-    i32 real_w{video->getWidth()};
-    i32 real_h{video->getHeight()};
+void GL1Renderer::setLogicalSize(i32 w, i32 h) {
+    Viewport vp = getViewport(w, h);
+    gl.enable(GL_TEXTURE_2D);
+    gl.matrixMode(GL_PROJECTION);
+    gl.loadIdentity();
+    gl.viewport(vp.x, vp.y, vp.w, vp.h);
+    gl.ortho(0, video->getWidth(), video->getHeight(), 0, 0, 1);
+
+    gl.matrixMode(GL_MODELVIEW);
+}
+
+Viewport GL1Renderer::getViewport(i32 width, i32 height) const {
+    i32 real_w;
+    i32 real_h;
+    getWindowSize(real_w, real_h);
 
     if (!width || !height) {
         // Disable aspect correction, so set
@@ -62,19 +71,10 @@ static Viewport getViewport(i32 width, i32 height) {
     return Viewport{.x = x, .y = 0, .w = w, .h = real_h};
 }
 
-void GL1Renderer::setLogicalSize(i32 w, i32 h) {
-    Viewport vp = getViewport(w, h);
-    gl.enable(GL_TEXTURE_2D);
-    gl.matrixMode(GL_PROJECTION);
-    gl.loadIdentity();
-    gl.viewport(vp.x, vp.y, vp.w, vp.h);
-
-    // FIXME: Replace 320x200 with actual value from video mode.
-    gl.ortho(0, 320, 200, 0, 0, 1);
-
-    gl.matrixMode(GL_MODELVIEW);
-}
-
-void GL1Renderer::present() {
-    SDL_GL_SwapWindow(window);
+void GL1Renderer::getWindowSize(i32& w, i32& h) const {
+    int iw = 0;
+    int ih = 0;
+    SDL_GetWindowSizeInPixels(window, &iw, &ih);
+    w = (i32) iw;
+    h = (i32) ih;
 }
