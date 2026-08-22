@@ -110,6 +110,11 @@ void GL1Renderer::uploadImage32bit(Image* img, u32* data) {
 }
 
 void GL1Renderer::getScaledSize(i32 w, i32 h, i32& scaled_w, i32& scaled_h) const {
+    if (gl.npotSupported()) {
+        scaled_w = w;
+        scaled_h = h;
+        return;
+    }
     scaled_w = 1;
     scaled_h = 1;
     while (scaled_w < w) {

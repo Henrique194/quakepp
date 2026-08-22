@@ -29,6 +29,7 @@
 #define CHECK_ERROR()
 #endif
 
+
 static const char* getErrorMsg(u32 error_code) {
     switch (error_code) {
         case GL_INVALID_ENUM:
@@ -73,6 +74,7 @@ std::expected<GLContext, const char*> GLContext::create(SDL_Window* window) {
 
 GLContext::GLContext(SDL_GLContext ctx)
     : ctx{ctx} {
+    npot_supported = SDL_GL_ExtensionSupported("GL_ARB_texture_non_power_of_two");
 }
 
 GLContext::GLContext(GLContext&& other)
@@ -85,6 +87,11 @@ GLContext::~GLContext() {
         SDL_GL_DeleteContext(ctx);
     }
 }
+
+bool GLContext::npotSupported() const {
+    return npot_supported;
+}
+
 
 void GLContext::alphaFunc(u32 func, float ref) {
     glAlphaFunc(func, ref);

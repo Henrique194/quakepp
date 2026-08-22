@@ -1,7 +1,7 @@
 set(LIB input)
 
 add_library(${LIB} STATIC
-    src/input.cpp
+    src/init.cpp
     src/mouse.cpp
 )
 

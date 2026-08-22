@@ -27,8 +27,8 @@ void Menu::frame() {
 
 void Menu::calcScale() {
     i32 i{video->getWidth() / 320};
-    i32 j{video->getHeight() / 240};
-    if (i > j) {
+    i32 j{video->getHeight() / 200};
+    if (j < i) {
         i = j;
     }
     if (i < 1) {
@@ -52,5 +52,7 @@ void Menu::draw() {
 }
 
 void Menu::drawPic(const char* name, i32 x, i32 y) {
+    i32 w{video->getWidth()};
+    x += ((w - 320) >> 1);
     video->drawPic(name, x, y);
 }

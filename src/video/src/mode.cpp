@@ -32,12 +32,18 @@ i32 Video::getHeight() const {
 }
 
 void Video::setMode(i32 mode) {
+    // FIXME: Move this logic to renderer.
     int w;
     int h;
     SDL_GetWindowSizeInPixels(window, &w, &h);
     width = (i32) w;
     height = (i32) h;
     enableAspectCorrection();
+
+    // FIXME: Get width and height from video mode table.
+    // FIXME: Remove this hack after creating video mode table.
+    width = 320;
+    height = 200;
 }
 
 void Video::enableAspectCorrection() {

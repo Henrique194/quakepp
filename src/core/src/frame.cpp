@@ -26,13 +26,13 @@
 void Engine::runLoop() {
     while (handleEvents()) {
         runFrame();
-        SDL_Delay(16); // 60 FPS
     }
 }
 
 void Engine::runFrame() {
     menu->frame();
     video->frame();
+    SDL_Delay(16); // 60 FPS
 }
 
 bool Engine::handleEvents() {

@@ -32,6 +32,8 @@ class GLContext {
     GLContext(GLContext&& other);
     ~GLContext();
 
+    bool npotSupported() const;
+
     void alphaFunc(u32 func, float ref);
     void begin(u32 mode);
     void bindTexture(u32 target, u32 texture);
@@ -41,26 +43,9 @@ class GLContext {
     void genTextures(i32 n, u32* textures);
     void loadIdentity();
     void matrixMode(u32 mode);
-    void ortho(
-        double left,
-        double right,
-        double bottom,
-        double top,
-        double zNear,
-        double zFar
-    );
+    void ortho(double left, double right, double bottom, double top, double zNear, double zFar);
     void texCoord2f(float s, float t);
-    void texImage2D(
-        u32 target,
-        i32 level,
-        i32 internal_format,
-        i32 width,
-        i32 height,
-        i32 border,
-        u32 format,
-        u32 type,
-        const void* pixels
-    );
+    void texImage2D(u32 target, i32 level, i32 internal_format, i32 width, i32 height, i32 border, u32 format, u32 type, const void* pixels);
     void texParameterf(u32 target, u32 pname, float param);
     void vertex2f(float x, float y);
     void viewport(i32 x, i32 y, i32 width, i32 height);
@@ -69,4 +54,6 @@ class GLContext {
     GLContext(SDL_GLContext ctx);
 
     SDL_GLContext ctx{nullptr};
+    // Support for non-power of two textures.
+    bool npot_supported;
 };

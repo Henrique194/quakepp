@@ -29,12 +29,20 @@ struct Viewport {
 };
 
 static Viewport getViewport(i32 width, i32 height) {
-    float logical_w{(float) width};
-    float logical_h{(float) height};
     i32 real_w{video->getWidth()};
     i32 real_h{video->getHeight()};
+
+    if (!width || !height) {
+        // Disable aspect correction, so set
+        // viewport to match window size.
+        return Viewport{.x = 0, .y = 0, .w = real_w, .h = real_h};
+    }
+
+    float logical_w{(float) width};
+    float logical_h{(float) height};
     float want_aspect{logical_w / logical_h};
-    float real_aspect{(float) real_w / real_h};
+    float real_aspect{(float) real_w / (float) real_h};
+
     if (SDL_fabs(want_aspect - real_aspect) < 0.0001) {
         // Aspect ratios are the same.
         return Viewport{.x = 0, .y = 0, .w = real_w, .h = real_h};
@@ -46,20 +54,24 @@ static Viewport getViewport(i32 width, i32 height) {
         i32 y{(real_h - h) / 2};
         return Viewport{.x = 0, .y = y, .w = real_w, .h = h};
     }
+
     // Narrower aspect ratio, so use side-bars.
-    float scale = (float) real_h / logical_h;
+    float scale{(float) real_h / logical_h};
     i32 w{(i32) SDL_floor(logical_w * scale)};
     i32 x{(real_w - w) / 2};
     return Viewport{.x = x, .y = 0, .w = w, .h = real_h};
 }
 
 void GL1Renderer::setLogicalSize(i32 w, i32 h) {
-    Viewport viewport{getViewport(w, h)};
+    Viewport vp = getViewport(w, h);
     gl.enable(GL_TEXTURE_2D);
     gl.matrixMode(GL_PROJECTION);
     gl.loadIdentity();
-    gl.viewport(viewport.x, viewport.y, viewport.w, viewport.h);
+    gl.viewport(vp.x, vp.y, vp.w, vp.h);
+
+    // FIXME: Replace 320x200 with actual value from video mode.
     gl.ortho(0, 320, 200, 0, 0, 1);
+
     gl.matrixMode(GL_MODELVIEW);
 }
 
